@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>부산 쉼표 - 나의 여행 목록</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="trip_list_style.css">
+</head>
+<body>
+    <div class="list-container">
+        <header>
+            <h1>부산 쉼표</h1>
+            <h2>나의 여행 일기장 📝</h2>
+        </header>
+
+        <main id="trip-cards" class="trip-cards">
+            <div class="trip-card">
+                <div class="card-info">
+                    <h3>여름 휴가 부산 여행</h3>
+                    <p>2025.08.15 ~ 2025.08.17</p>
+                </div>
+                <div class="card-actions">
+                    <button class="edit-btn">✏️</button>
+                    <button class="delete-btn">🗑️</button>
+                </div>
+                </div>
+
+            <div class="trip-card">
+                 <div class="card-info">
+                    <h3>가을 주말 힐링</h3>
+                    <p>2025.10.03 ~ 2025.10.05</p>
+                </div>
+                <div class="card-actions">
+                    <button class="edit-btn">✏️</button>
+                    <button class="delete-btn">🗑️</button>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <button id="add-trip-btn" class="add-trip-btn">+ 새 여행 기록하기</button>
+        </footer>
+    </div>
+
+    <div id="add-trip-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="modal-title">새 여행 기록</h3>
+            <label for="trip-name">여행 이름</label>
+            <input type="text" id="trip-name" placeholder="예: 여름 휴가 부산 여행">
+            <label for="trip-start-date">시작일</label>
+            <input type="date" id="trip-start-date">
+            <label for="trip-end-date">종료일</label>
+            <input type="date" id="trip-end-date">
+            <div class="modal-buttons">
+                <button id="cancel-trip-btn">취소</button>
+                <button id="save-trip-btn">저장</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="trip_list_script.js"></script>
+</body>
+</html>
