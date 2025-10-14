@@ -3,68 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>부산 쉼표 - 경비 계산기</title>
-    <link rel="stylesheet" href="style.css"> <link rel="stylesheet" href="calculator_style.css"> </head>
+    <title>부산 쉼표 - 여행 가계부</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="calculator_style.css">
+</head>
 <body>
     <div class="calculator-container">
-        <header>
-            <h1>부산 쉼표</h1>
-            <h2>여행 경비 계산기</h2>
+        <header class="page-header">
+            <a href="trip_list.html" class="back-btn">←</a>
+            <h2 id="trip-title">여행 가계부</h2>
         </header>
-
         <section class="summary">
-            <div class="summary-box total-budget">
-                <label>총 여행 예산</label>
-                <div class="amount">₩ 600,000</div>
+            <div class="summary-box">
+                <label>오늘의 예산</label>
+                <div id="daily-budget" class="amount">₩ 100,000</div>
             </div>
-            <div class="summary-box total-spent">
-                <label>총 지출</label>
-                <div class="amount">₩ 289,487</div>
+            <div class="summary-box">
+                <label>오늘의 지출</label>
+                <div id="daily-spent" class="amount">₩ 0</div>
             </div>
             <div class="summary-box remaining">
-                <label>남은 금액</label>
-                <div class="amount">₩ 310,513</div>
+                <label>남은 예산</label>
+                <div id="daily-remaining" class="amount">₩ 100,000</div>
             </div>
         </section>
 
+        <nav id="day-tabs" class="day-tabs"></nav>
+        
         <main class="expense-table">
             <div class="table-header">
                 <div>항목</div>
-                <div>예산</div>
                 <div>지출</div>
                 <div>사용처</div>
+                <div>관리</div>
             </div>
-            <div class="table-body">
-                <div class="table-row">
-                    <div>🏨 숙소</div>
-                    <div>₩ 200,000</div>
-                    <div>₩ 121,187</div>
-                    <div>시타딘 커넥트 호텔</div>
+            <div id="table-body" class="table-body">
                 </div>
-                <div class="table-row">
-                    <div>🚌 교통비</div>
-                    <div>₩ 50,000</div>
-                    <div>₩ 20,300</div>
-                    <div>지하철, 버스 등</div>
-                </div>
-                <div class="table-row">
-                    <div>🍜 식비</div>
-                    <div>₩ 150,000</div>
-                    <div>₩ 85,000</div>
-                    <div>돼지국밥, 회, 카페 등</div>
-                </div>
-                 <div class="table-row">
-                    <div>🛍️ 쇼핑 및 기타</div>
-                    <div>₩ 200,000</div>
-                    <div>₩ 63,000</div>
-                    <div>소품샵, 기념품 등</div>
-                </div>
-            </div>
         </main>
 
         <footer>
-            <button class="add-btn">+ 항목 추가하기</button>
+            <button id="add-btn" class="add-btn">+ 항목 추가하기</button>
         </footer>
     </div>
+
+    <div id="add-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>새 항목 추가</h3>
+            <input type="text" id="item-category" placeholder="항목 (예: ☕ 카페)">
+            <input type="number" id="item-spent" placeholder="지출액 (숫자만 입력)">
+            <input type="text" id="item-description" placeholder="사용처 (예: 스타벅스)">
+            <div class="modal-buttons">
+                <button id="cancel-btn">취소</button>
+                <button id="save-btn">저장</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="calculator_script.js"></script>
 </body>
 </html>
