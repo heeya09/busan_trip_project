@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>부산 쉼표 - 경비 계산기</title>
+    <link rel="stylesheet" href="style.css"> <link rel="stylesheet" href="calculator_style.css"> </head>
+<body>
+    <div class="calculator-container">
+        <header>
+            <h1>부산 쉼표</h1>
+            <h2>여행 경비 계산기</h2>
+        </header>
+
+        <section class="summary">
+            <div class="summary-box total-budget">
+                <label>총 여행 예산</label>
+                <div class="amount">₩ 600,000</div>
+            </div>
+            <div class="summary-box total-spent">
+                <label>총 지출</label>
+                <div class="amount">₩ 289,487</div>
+            </div>
+            <div class="summary-box remaining">
+                <label>남은 금액</label>
+                <div class="amount">₩ 310,513</div>
+            </div>
+        </section>
+
+        <main class="expense-table">
+            <div class="table-header">
+                <div>항목</div>
+                <div>예산</div>
+                <div>지출</div>
+                <div>사용처</div>
+            </div>
+            <div class="table-body">
+                <div class="table-row">
+                    <div>🏨 숙소</div>
+                    <div>₩ 200,000</div>
+                    <div>₩ 121,187</div>
+                    <div>시타딘 커넥트 호텔</div>
+                </div>
+                <div class="table-row">
+                    <div>🚌 교통비</div>
+                    <div>₩ 50,000</div>
+                    <div>₩ 20,300</div>
+                    <div>지하철, 버스 등</div>
+                </div>
+                <div class="table-row">
+                    <div>🍜 식비</div>
+                    <div>₩ 150,000</div>
+                    <div>₩ 85,000</div>
+                    <div>돼지국밥, 회, 카페 등</div>
+                </div>
+                 <div class="table-row">
+                    <div>🛍️ 쇼핑 및 기타</div>
+                    <div>₩ 200,000</div>
+                    <div>₩ 63,000</div>
+                    <div>소품샵, 기념품 등</div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <button class="add-btn">+ 항목 추가하기</button>
+        </footer>
+    </div>
+</body>
+</html>
