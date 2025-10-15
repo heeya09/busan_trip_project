@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="ko" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>리뷰 & 다이어리</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    <style>
+        /* 기본 폰트 설정 */
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+        }
+        /* 스크롤바 디자인 */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        .dark ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+        
+        /* Modal & Toast transition styles */
+        .modal-backdrop, .toast { transition: opacity 0.3s ease-in-out; }
+        .modal-content, .toast { transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out; }
+        
+        .star-rating svg {
+            cursor: pointer;
+        }
+        /* Google Maps Search Box */
+        .pac-container {
+            z-index: 1050; /* Ensure it appears above other elements */
+        }
+    </style>
+</head>
+<body class="antialiased text-slate-700 bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
+
+    <!-- 글로벌 네비게이션 헤더 -->
+    <nav class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800">
+        <div class="container mx-auto px-4 md:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="#" class="flex items-center">
+                    <span class="text-xl font-bold text-blue-600 dark:text-blue-500">부산쉼표 🌊</span>
+                </a>
+                <div class="flex items-center gap-4">
+                    <div class="relative">
+                        <button id="lang-toggle" class="flex items-center gap-1 p-2 rounded-full text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-globe"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+                           <span id="current-lang-text" class="text-sm font-medium">KO</span>
+                        </button>
+                        <div id="lang-dropdown" class="absolute top-full right-0 mt-2 w-32 bg-white dark:bg-slate-800 rounded-lg shadow-lg border dark:border-slate-700 hidden">
+                            <a href="#" class="lang-option block px-4 py-2 text-sm" data-lang-value="ko">한국어</a>
+                            <a href="#" class="lang-option block px-4 py-2 text-sm" data-lang-value="en">English</a>
+                        </div>
+                    </div>
+                    <button id="dark-mode-toggle" class="p-2 rounded-full text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                        <svg id="sun-icon" class="hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                        <svg id="moon-icon" class="hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                    </button>
+                    <a href="#" class="flex items-center gap-3">
+                        <img src="https://placehold.co/40x40/E2E8F0/475569?text=User" alt="User profile" class="w-9 h-9 rounded-full border-2 border-slate-200 dark:border-slate-700">
+                        <span class="font-semibold text-slate-700 dark:text-slate-200 hidden sm:block">사용자 닉네임</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+        <!-- 페이지 헤더 -->
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-slate-800 dark:text-slate-100">리뷰 & 다이어리</h1>
+            <p class="text-slate-500 dark:text-slate-400 mt-1">여행의 추억을 기록하고 공유하세요.</p>
+        </header>
+
+        <!-- 탭 네비게이션 -->
+        <div class="border-b border-slate-200 dark:border-slate-700 mb-8">
+            <nav class="flex space-x-4" aria-label="Tabs">
+                <button data-tab="reviews" class="tab-btn active text-blue-600 border-b-2 border-blue-600 whitespace-nowrap py-3 px-4 font-semibold text-sm">
+                    여행지 리뷰
+                </button>
+                <button data-tab="diary" class="tab-btn text-slate-500 hover:text-blue-600 whitespace-nowrap py-3 px-4 font-semibold text-sm">
+                    개인 다이어리
+                </button>
+            </nav>
+        </div>
+
+        <!-- 탭 컨텐츠 -->
+        <main>
+            <!-- 여행지 리뷰 탭 -->
+            <div id="reviews-content" class="tab-content">
+                
+                <!-- 지도 섹션 -->
+                <div class="mb-8">
+                    <div class="relative mb-4">
+                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        <input id="pac-input" type="text" placeholder="리뷰를 남길 장소를 검색하세요" class="w-full pl-10 pr-4 py-3 rounded-lg shadow-sm border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white dark:bg-slate-800"/>
+                    </div>
+                    <div id="map" class="w-full h-[450px] rounded-2xl shadow-md border border-slate-200 dark:border-slate-700"></div>
+                </div>
+
+                <!-- 리뷰 작성 및 목록 섹션 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- 왼쪽: 리뷰 작성 폼 -->
+                    <div>
+                        <div id="review-form-container" class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-md border border-slate-200 dark:border-slate-700 hidden">
+                            <h2 class="text-xl font-semibold mb-4 text-slate-800 dark:text-slate-100" id="review-form-title">리뷰 남기기</h2>
+                            <form id="review-form" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">별점</label>
+                                    <div id="star-rating-input" class="star-rating flex items-center text-slate-300 dark:text-slate-600" data-rating="0">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="review-text" class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">리뷰 내용</label>
+                                    <textarea id="review-text" rows="4" required class="w-full p-3 bg-slate-100 dark:bg-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="이 장소에 대한 경험을 공유해주세요."></textarea>
+                                </div>
+                                <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition-colors">리뷰 등록</button>
+                            </form>
+                        </div>
+                        <div id="review-form-placeholder" class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-md border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center text-center h-full min-h-[300px]">
+                            <svg class="w-16 h-16 text-slate-300 dark:text-slate-600" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                            <p class="mt-4 font-semibold text-slate-600 dark:text-slate-300">장소를 선택하여 리뷰 작성</p>
+                            <p class="mt-1 text-sm text-slate-400 dark:text-slate-500">지도에서 원하는 위치를 클릭하거나<br>위 검색창을 이용해 장소를 찾아보세요.</p>
+                        </div>
+                    </div>
+
+                    <!-- 오른쪽: 리뷰 목록 -->
+                    <div>
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-semibold text-slate-800 dark:text-slate-100" id="reviews-list-title">리뷰 목록</h2>
+                            <div class="flex items-center gap-2">
+                                <label for="sort-reviews" class="text-sm font-medium">정렬:</label>
+                                <select id="sort-reviews" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md text-sm p-1.5 focus:ring-2 focus:ring-blue-500">
+                                    <option value="latest">최신순</option>
+                                    <option value="oldest">오래된순</option>
+                                    <option value="rating_desc">평점 높은순</option>
+                                    <option value="rating_asc">평점 낮은순</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="reviews-list" class="space-y-4">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 개인 다이어리 탭 (초기에는 숨김) -->
+            <div id="diary-content" class="tab-content hidden">
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="diary-password-modal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 hidden opacity-0">
+        <div class="modal-content bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-sm p-6 transform scale-95 opacity-0">
+        </div>
+    </div>
+    
+    <div id="diary-entry-modal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 hidden opacity-0">
+        <div class="modal-content bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-2xl p-6 transform scale-95 opacity-0">
+             <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-slate-800 dark:text-slate-100" id="diary-modal-title">새로운 기록</h2>
+                <button class="close-modal-btn p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+            <form id="diary-entry-form" class="space-y-4">
+                <input type="hidden" id="diary-entry-id">
+                 <div>
+                    <label for="diary-title" class="block text-sm font-medium">제목</label>
+                    <input type="text" id="diary-title" required class="w-full mt-1 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="오늘 하루를 한 문장으로 표현해보세요">
+                </div>
+                 <div>
+                    <label for="diary-content-text" class="block text-sm font-medium">내용</label>
+                    <textarea id="diary-content-text" rows="8" required class="w-full mt-1 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="어떤 추억을 기록할까요?"></textarea>
+                </div>
+                <div>
+                     <label class="block text-sm font-medium">오늘의 기분</label>
+                     <div id="diary-mood-selector" class="flex justify-around items-center mt-2 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg">
+                         <span class="text-3xl cursor-pointer transform hover:scale-125 transition-transform" data-mood="😍">😍</span>
+                         <span class="text-3xl cursor-pointer transform hover:scale-125 transition-transform" data-mood="😊">😊</span>
+                         <span class="text-3xl cursor-pointer transform hover:scale-125 transition-transform" data-mood="😐">😐</span>
+                         <span class="text-3xl cursor-pointer transform hover:scale-125 transition-transform" data-mood="😢">😢</span>
+                         <span class="text-3xl cursor-pointer transform hover:scale-125 transition-transform" data-mood="🤔">🤔</span>
+                     </div>
+                     <input type="hidden" id="diary-mood">
+                </div>
+                <div>
+                     <label for="diary-photo-input" class="block text-sm font-medium">사진 첨부</label>
+                     <input type="file" id="diary-photo-input" accept="image/*" class="w-full mt-1 text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-slate-700 dark:file:text-slate-300 dark:hover:file:bg-slate-600">
+                     <div id="diary-photo-preview-container" class="mt-2"></div>
+                </div>
+                <div>
+                     <label for="diary-tags" class="block text-sm font-medium">태그</label>
+                     <input type="text" id="diary-tags" class="w-full mt-1 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="#부산 #해운대 #가족여행 (쉼표로 구분)">
+                </div>
+                <div class="flex justify-end gap-4 pt-4">
+                    <button type="button" class="cancel-modal-btn px-6 py-2 bg-slate-200 dark:bg-slate-600 font-semibold rounded-lg hover:bg-slate-300 dark:hover:bg-slate-500 transition-colors">취소</button>
+                    <button type="submit" class="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="diary-view-modal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 hidden opacity-0">
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-5 right-5 z-[100] space-y-3"></div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- 상태 관리 ---
+            let currentLocationKey = ''; // e.g., 'ChIJ_w_x9-RraDURr_qW_f-z8L8' (Place ID)
+            let currentLocationName = ''; // e.g., '해운대해수욕장'
+            let reviews = {}; // { 'place_id': [review1, review2] }
+            let diaryEntries = [];
+            let diaryPassword = null;
+            let diaryUnlocked = false;
+
+            // --- DOM 요소 ---
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const passwordModal = document.getElementById('diary-password-modal');
+            const diaryEntryModal = document.getElementById('diary-entry-modal');
+            const diaryViewModal = document.getElementById('diary-view-modal');
+            const reviewFormContainer = document.getElementById('review-form-container');
+            const reviewFormPlaceholder = document.getElementById('review-form-placeholder');
+
+            // --- 유틸리티 및 핵심 함수 ---
+            function showToast(message, type = 'success') {
+                const colors = { success: 'bg-emerald-500', error: 'bg-red-500', info: 'bg-blue-500' };
+                const toastContainer = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                
+                toast.className = `toast flex items-center w-full max-w-xs p-4 text-white ${colors[type]} rounded-lg shadow-lg opacity-0 transform translate-y-5`;
+                toast.innerHTML = `<span>${message}</span>`;
+                toastContainer.appendChild(toast);
+
+                requestAnimationFrame(() => {
+                    toast.classList.remove('opacity-0', 'translate-y-5');
+                });
+
+                setTimeout(() => {
+                    toast.classList.add('opacity-0');
+                    toast.addEventListener('transitionend', () => toast.remove());
+                }, 3000);
+            }
+
+            function openModal(modal) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    modal.querySelector('.modal-content').classList.remove('scale-95', 'opacity-0');
+                }, 10);
+            }
+
+            function closeModal(modal) {
+                modal.classList.add('opacity-0');
+                modal.querySelector('.modal-content').classList.add('scale-95', 'opacity-0');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            }
+
+            function renderStars(container, rating = 0, isInput = false) {
+                container.innerHTML = '';
+                for (let i = 1; i <= 5; i++) {
+                    const starIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    starIcon.setAttribute('class', `w-6 h-6 ${i <= rating ? 'text-yellow-400' : (isInput ? 'hover:text-yellow-300' : '')}`);
+                    starIcon.setAttribute('fill', 'currentColor');
+                    starIcon.setAttribute('viewBox', '0 0 20 20');
+                    starIcon.innerHTML = `<path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />`;
+                    if (isInput) starIcon.dataset.value = i;
+                    container.appendChild(starIcon);
+                }
+            }
+            
+            function updateThemeIcons() {
+                if (document.documentElement.classList.contains('dark')) {
+                    document.getElementById('sun-icon').classList.remove('hidden');
+                    document.getElementById('moon-icon').classList.add('hidden');
+                } else {
+                    document.getElementById('sun-icon').classList.add('hidden');
+                    document.getElementById('moon-icon').classList.remove('hidden');
+                }
+            }
+            
+            // --- 지도 관련 함수 ---
+            let map;
+            let marker;
+            let infowindow;
+
+            window.initMap = function() {
+                const busan = { lat: 35.1796, lng: 129.0756 };
+                map = new google.maps.Map(document.getElementById("map"), {
+                    center: busan,
+                    zoom: 12,
+                    mapTypeControl: false,
+                    streetViewControl: false,
+                });
+
+                marker = new google.maps.Marker({
+                    map,
+                    anchorPoint: new google.maps.Point(0, -29),
+                });
+                infowindow = new google.maps.InfoWindow();
+
+                const input = document.getElementById("pac-input");
+                const autocomplete = new google.maps.places.Autocomplete(input, {
+                    fields: ["place_id", "geometry", "name", "formatted_address"],
+                });
+                autocomplete.bindTo("bounds", map);
+
+                autocomplete.addListener("place_changed", () => {
+                    infowindow.close();
+                    marker.setVisible(false);
+                    const place = autocomplete.getPlace();
+
+                    if (!place.geometry || !place.geometry.location) {
+                        showToast(`'${place.name}'의 위치 정보를 가져올 수 없습니다. API 키에 결제 계정이 연결되었는지 확인해주세요.`, "error");
+                        return;
+                    }
+
+                    if (place.geometry.viewport) {
+                        map.fitBounds(place.geometry.viewport);
+                    } else {
+                        map.setCenter(place.geometry.location);
+                        map.setZoom(17);
+                    }
+                    
+                    updateLocation(place.place_id, place.name, place.geometry.location);
+                });
+
+                map.addListener('click', (e) => {
+                    const geocoder = new google.maps.Geocoder();
+                    geocoder.geocode({ location: e.latLng }, (results, status) => {
+                        if (status === 'OK') {
+                            if (results[0]) {
+                                const place = results[0];
+                                updateLocation(place.place_id, place.formatted_address.split(',').slice(0, 2).join(', '), e.latLng);
+                            } else {
+                                showToast('검색 결과가 없습니다.', 'error');
+                            }
+                        } else {
+                            showToast('Geocoder에 실패했습니다: ' + status, 'error');
+                        }
+                    });
+                });
+            }
+
+            function updateLocation(placeId, name, position) {
+                currentLocationKey = placeId;
+                currentLocationName = name;
+                
+                marker.setPosition(position);
+                marker.setVisible(true);
+                
+                reviewFormContainer.classList.add('hidden');
+                reviewFormPlaceholder.classList.remove('hidden');
+                updateReviewTitles();
+                renderReviews();
+                
+                const contentString = `
+                    <div class="p-2 font-sans">
+                        <div class="font-bold">${name}</div>
+                        <button id="info-window-write-review" class="mt-2 w-full text-center px-3 py-1 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700">리뷰쓰기</button>
+                    </div>`;
+                
+                infowindow.setContent(contentString);
+                infowindow.open(map, marker);
+
+                google.maps.event.addListener(infowindow, 'domready', () => {
+                    const writeReviewBtn = document.getElementById('info-window-write-review');
+                    if (writeReviewBtn) {
+                        writeReviewBtn.addEventListener('click', () => {
+                            reviewFormContainer.classList.remove('hidden');
+                            reviewFormPlaceholder.classList.add('hidden');
+                            infowindow.close();
+                        });
+                    }
+                });
+            }
+
+            // --- 리뷰 관련 함수 ---
+            function updateReviewTitles() {
+                const title = currentLocationName || '장소';
+                document.getElementById('review-form-title').textContent = `${title} 리뷰 남기기`;
+                document.getElementById('reviews-list-title').textContent = `${title} 리뷰 목록`;
+            }
+
+            function loadReviews() {
+                const savedReviews = localStorage.getItem('travelReviews_google');
+                reviews = savedReviews ? JSON.parse(savedReviews) : {};
+                renderReviews();
+            };
+            
+            function saveReviews() {
+                localStorage.setItem('travelReviews_google', JSON.stringify(reviews));
+            };
+            
+            function renderReviews() {
+                const listEl = document.getElementById('reviews-list');
+                const sortOrder = document.getElementById('sort-reviews').value;
+                const reviewsForLocation = reviews[currentLocationKey] || [];
+                listEl.innerHTML = '';
+                
+                const sortedReviews = [...reviewsForLocation].sort((a, b) => {
+                    switch (sortOrder) {
+                        case 'rating_desc':
+                            return b.rating - a.rating || new Date(b.date) - new Date(a.date);
+                        case 'rating_asc':
+                            return a.rating - b.rating || new Date(b.date) - new Date(a.date);
+                        case 'oldest':
+                            return new Date(a.date) - new Date(b.date);
+                        case 'latest':
+                        default:
+                            return new Date(b.date) - new Date(a.date);
+                    }
+                });
+
+                if (sortedReviews.length === 0) {
+                    listEl.innerHTML = `<p class="text-center text-slate-500 py-8">${currentLocationKey ? '이 장소에 대한 첫 리뷰를 남겨보세요!' : '지도에서 장소를 선택하거나 검색해주세요.'}</p>`;
+                    return;
+                }
+
+                sortedReviews.forEach(review => {
+                    const reviewEl = document.createElement('div');
+                    reviewEl.className = 'bg-white dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700';
+                    const starContainer = document.createElement('div');
+                    starContainer.className = 'flex items-center mb-2';
+                    renderStars(starContainer, review.rating, false);
+                    
+                    reviewEl.innerHTML = `
+                        <p class="text-slate-600 dark:text-slate-300">${review.text}</p>
+                        <p class="text-xs text-slate-400 dark:text-slate-500 mt-2">${new Date(review.date).toLocaleString('ko-KR')}</p>
+                    `;
+                    reviewEl.prepend(starContainer);
+                    listEl.appendChild(reviewEl);
+                });
+            };
+
+            // --- 다이어리 관련 함수들 ---
+            function loadDiaryData() {
+                diaryPassword = localStorage.getItem('diaryPassword');
+                const savedEntries = localStorage.getItem('diaryEntries');
+                diaryEntries = savedEntries ? JSON.parse(savedEntries) : [];
+            };
+
+            function saveDiaryData() {
+                localStorage.setItem('diaryEntries', JSON.stringify(diaryEntries));
+            };
+            
+            function handlePasswordCheck() {
+                const modalContent = passwordModal.querySelector('.modal-content');
+                
+                // 비밀번호 입력 화면을 그리는 함수
+                function showLoginScreen() {
+                    modalContent.innerHTML = `
+                        <h2 class="text-xl font-semibold text-center">비밀번호 입력</h2>
+                        <p class="text-center text-sm text-slate-500 my-2">다이어리를 열람하려면 비밀번호를 입력하세요.</p>
+                        <form id="enter-password-form">
+                            <input type="password" id="input-password" required class="w-full mt-4 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg text-center" placeholder="비밀번호">
+                            <button type="submit" class="w-full mt-4 bg-blue-600 text-white font-bold py-2 rounded-lg">입장하기</button>
+                        </form>
+                        <div class="text-center mt-4">
+                            <a href="#" id="forgot-password-link" class="text-sm text-blue-600 hover:underline">비밀번호를 잊으셨나요?</a>
+                        </div>
+                    `;
+                    modalContent.querySelector('#enter-password-form').addEventListener('submit', (e) => {
+                         e.preventDefault();
+                         const inputPass = document.getElementById('input-password').value;
+                         if (inputPass === diaryPassword) {
+                             diaryUnlocked = true;
+                             closeModal(passwordModal);
+                             document.querySelector('.tab-btn[data-tab="diary"]').click();
+                         } else {
+                             showToast('비밀번호가 틀렸습니다.', 'error');
+                         }
+                    });
+                    modalContent.querySelector('#forgot-password-link').addEventListener('click', (e) => {
+                        e.preventDefault();
+                        showPasswordResetScreen();
+                    });
+                }
+
+                // 비밀번호 재설정 화면을 그리는 함수
+                function showPasswordResetScreen() {
+                    modalContent.innerHTML = `
+                        <h2 class="text-xl font-semibold text-center">비밀번호 재설정</h2>
+                        <p class="text-center text-sm text-slate-500 my-2">이 기능은 데모용이며 실제 작동하지 않습니다.</p>
+                        <div class="space-y-3 mt-4">
+                            <button class="w-full py-2 bg-yellow-400 text-yellow-900 font-bold rounded-lg hover:bg-yellow-500">소셜 계정으로 찾기</button>
+                            <button class="w-full py-2 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600">전화번호로 찾기</button>
+                        </div>
+                        <div class="text-center mt-4">
+                            <a href="#" id="back-to-login-link" class="text-sm text-blue-600 hover:underline">로그인으로 돌아가기</a>
+                        </div>
+                    `;
+                    modalContent.querySelector('#back-to-login-link').addEventListener('click', (e) => {
+                        e.preventDefault();
+                        showLoginScreen();
+                    });
+                     modalContent.querySelectorAll('button').forEach(btn => {
+                        btn.addEventListener('click', () => showToast('백엔드 연동이 필요한 기능입니다.', 'info'));
+                    });
+                }
+
+                if (!diaryPassword) { // 최초 접속: 비밀번호 설정
+                    modalContent.innerHTML = `
+                        <h2 class="text-xl font-semibold text-center">다이어리 비밀번호 설정</h2>
+                        <p class="text-center text-sm text-slate-500 my-2">처음 사용 시 비밀번호를 설정해야 합니다.</p>
+                        <form id="set-password-form">
+                            <input type="password" id="new-password" required class="w-full mt-4 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg text-center" placeholder="새 비밀번호 (4자 이상)">
+                            <input type="password" id="confirm-password" required class="w-full mt-2 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg text-center" placeholder="비밀번호 확인">
+                            <button type="submit" class="w-full mt-4 bg-blue-600 text-white font-bold py-2 rounded-lg">설정하기</button>
+                        </form>
+                    `;
+                    modalContent.querySelector('#set-password-form').addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        const newPass = document.getElementById('new-password').value;
+                        const confirmPass = document.getElementById('confirm-password').value;
+                        if (newPass.length < 4) {
+                            showToast('비밀번호는 4자 이상이어야 합니다.', 'error'); return;
+                        }
+                        if (newPass !== confirmPass) {
+                            showToast('비밀번호가 일치하지 않습니다.', 'error'); return;
+                        }
+                        diaryPassword = newPass;
+                        localStorage.setItem('diaryPassword', diaryPassword);
+                        diaryUnlocked = true;
+                        closeModal(passwordModal);
+                        document.querySelector('.tab-btn[data-tab="diary"]').click();
+                        showToast('비밀번호가 설정되었습니다.');
+                    });
+                } else { // 재방문: 비밀번호 입력
+                    showLoginScreen();
+                }
+                openModal(passwordModal);
+            };
+
+            function renderDiaryUI(searchTerm = '') {
+                const diaryContent = document.getElementById('diary-content');
+                diaryContent.innerHTML = `
+                    <div class="p-6 md:p-8 rounded-2xl min-h-[60vh]">
+                        <div class="flex flex-wrap justify-between items-center gap-4 mb-8">
+                            <div class="relative w-full md:w-auto flex-grow">
+                                <input type="search" id="diary-search-input" class="w-full pl-10 pr-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800" placeholder="나의 추억 검색하기...">
+                                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            </div>
+                            <button id="new-diary-entry-btn" class="w-full md:w-auto bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition-all">
+                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                                새로운 기록
+                            </button>
+                        </div>
+                        <div id="diary-entries-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        </div>
+                    </div>
+                `;
+
+                const listEl = document.getElementById('diary-entries-list');
+                const filteredEntries = searchTerm ? diaryEntries.filter(entry => 
+                    entry.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                    entry.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    entry.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+                ) : diaryEntries;
+                
+                filteredEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                if (filteredEntries.length === 0) {
+                    listEl.innerHTML = `<div class="sm:col-span-2 lg:col-span-3 text-center text-slate-500 py-16 flex flex-col items-center">
+                        <svg class="w-16 h-16 text-slate-300 dark:text-slate-600" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+                        <p class="mt-4">아직 기록된 다이어리가 없습니다.<br>첫 기록을 남겨보세요.</p>
+                    </div>`;
+                } else {
+                    filteredEntries.forEach(entry => {
+                        const entryEl = document.createElement('div');
+                        entryEl.className = 'diary-entry-card group bg-white dark:bg-slate-800 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-slate-200 dark:border-slate-700 overflow-hidden cursor-pointer';
+                        entryEl.dataset.id = entry.id;
+                        
+                        let imageHtml = '';
+                        if (entry.photo) {
+                            imageHtml = `
+                            <div class="h-48 w-full overflow-hidden">
+                                <img src="${entry.photo}" alt="${entry.title}" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300">
+                            </div>`;
+                        }
+
+                        entryEl.innerHTML = `
+                            ${imageHtml}
+                            <div class="p-5 relative">
+                                <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100 truncate">${entry.title}</h3>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1.5">
+                                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                                    ${new Date(entry.date).toLocaleDateString('ko-KR')}
+                                </p>
+                                <p class="text-sm text-slate-600 dark:text-slate-300 mt-3 h-10 [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)]">${entry.content}</p>
+                                ${entry.mood ? `<div class="absolute bottom-3 right-3 text-3xl">${entry.mood}</div>` : ''}
+                            </div>
+                        `;
+                        listEl.appendChild(entryEl);
+                    });
+                }
+                
+                document.getElementById('new-diary-entry-btn').addEventListener('click', () => openDiaryEntryModal());
+                document.getElementById('diary-search-input').addEventListener('input', e => renderDiaryUI(e.target.value));
+                 listEl.addEventListener('click', (e) => {
+                    const card = e.target.closest('.diary-entry-card');
+                    if (card) {
+                        const entryId = parseInt(card.dataset.id);
+                        const entry = diaryEntries.find(item => item.id === entryId);
+                        if(entry) openDiaryViewModal(entry);
+                    }
+                });
+            };
+
+            function openDiaryEntryModal(entry = null) {
+                const form = document.getElementById('diary-entry-form');
+                form.reset();
+                const previewContainer = document.getElementById('diary-photo-preview-container');
+                previewContainer.innerHTML = '';
+                
+                const moodSelector = document.getElementById('diary-mood-selector');
+                const moodInput = document.getElementById('diary-mood');
+                moodSelector.querySelectorAll('span').forEach(span => {
+                    span.classList.remove('scale-125', 'ring-2', 'ring-blue-500', 'rounded-full');
+                });
+
+                if (entry) {
+                    document.getElementById('diary-modal-title').textContent = '기록 수정';
+                    form['diary-entry-id'].value = entry.id;
+                    form['diary-title'].value = entry.title;
+                    form['diary-content-text'].value = entry.content;
+                    form['diary-tags'].value = entry.tags.join(', ');
+                    
+                    if (entry.mood) {
+                        const selectedMoodSpan = moodSelector.querySelector(`[data-mood="${entry.mood}"]`);
+                        if (selectedMoodSpan) {
+                            selectedMoodSpan.classList.add('scale-125', 'ring-2', 'ring-blue-500', 'rounded-full');
+                        }
+                        moodInput.value = entry.mood;
+                    } else {
+                        moodInput.value = '';
+                    }
+
+                    if (entry.photo) {
+                        previewContainer.innerHTML = `
+                            <div class="relative w-fit">
+                                <img src="${entry.photo}" class="max-h-40 rounded-lg">
+                                <button type="button" id="remove-image-btn" class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-0.5 leading-none w-6 h-6 flex items-center justify-center">&times;</button>
+                                <input type="hidden" id="existing-photo-data" value="${entry.photo}">
+                            </div>`;
+                        document.getElementById('remove-image-btn').addEventListener('click', () => {
+                            previewContainer.innerHTML = '<p class="text-sm text-red-500">사진이 삭제됩니다. 저장 버튼을 눌러야 반영됩니다.</p><input type="hidden" id="image-removed-flag" value="true">';
+                        });
+                    }
+                } else {
+                    document.getElementById('diary-modal-title').textContent = '새로운 기록';
+                    form['diary-entry-id'].value = '';
+                    moodInput.value = '';
+                }
+                openModal(diaryEntryModal);
+            };
+
+            function openDiaryViewModal(entry) {
+                const modalContent = document.createElement('div');
+                modalContent.className = 'modal-content bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-2xl transform scale-95 opacity-0';
+                
+                let imageHtml = '';
+                if(entry.photo) {
+                    imageHtml = `<div class="mb-6 rounded-lg overflow-hidden shadow-lg"><img src="${entry.photo}" alt="${entry.title}" class="w-full h-auto max-h-[50vh] object-contain"></div>`;
+                }
+
+                modalContent.innerHTML = `
+                    <div class="p-6 md:p-8">
+                        ${imageHtml}
+                        <div class="text-center mb-6">
+                            <h2 class="text-3xl font-bold text-slate-800 dark:text-slate-100 inline-block">${entry.title}</h2>
+                            ${entry.mood ? `<span class="text-3xl ml-2">${entry.mood}</span>` : ''}
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">${new Date(entry.date).toLocaleString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+                        </div>
+                        
+                        <p class="text-slate-600 dark:text-slate-300 whitespace-pre-wrap leading-relaxed text-lg">${entry.content}</p>
+                        
+                        ${entry.tags.length > 0 ? `<div class="mt-8 pt-4 border-t border-slate-200 dark:border-slate-700 flex flex-wrap justify-center gap-2">${entry.tags.map(tag => `<span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">#${tag}</span>`).join('')}</div>` : ''}
+                        
+                        <div class="flex justify-end gap-4 pt-6 mt-6">
+                             <button type="button" class="delete-diary-btn px-6 py-2 bg-red-100 text-red-700 font-semibold rounded-lg hover:bg-red-200 transition-colors">삭제</button>
+                            <button type="button" class="edit-diary-btn px-6 py-2 bg-slate-200 dark:bg-slate-600 font-semibold rounded-lg hover:bg-slate-300 dark:hover:bg-slate-500 transition-colors">수정</button>
+                             <button type="button" class="close-modal-btn px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors">닫기</button>
+                        </div>
+                    </div>
+                `;
+                diaryViewModal.innerHTML = '';
+                diaryViewModal.appendChild(modalContent);
+                openModal(diaryViewModal);
+                
+                diaryViewModal.querySelector('.close-modal-btn').addEventListener('click', () => closeModal(diaryViewModal));
+                diaryViewModal.querySelector('.edit-diary-btn').addEventListener('click', () => {
+                    closeModal(diaryViewModal);
+                    openDiaryEntryModal(entry);
+                });
+                diaryViewModal.querySelector('.delete-diary-btn').addEventListener('click', () => {
+                     if(confirm('정말로 이 기록을 삭제하시겠습니까?')) {
+                        diaryEntries = diaryEntries.filter(item => item.id !== entry.id);
+                        saveDiaryData();
+                        renderDiaryUI();
+                        closeModal(diaryViewModal);
+                        showToast('기록이 삭제되었습니다.');
+                    }
+                });
+            };
+            
+            // --- 초기화 함수 ---
+            function initializeApp() {
+                updateThemeIcons();
+                document.getElementById('dark-mode-toggle').addEventListener('click', () => {
+                    document.documentElement.classList.toggle('dark');
+                    localStorage.setItem('color-theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+                    updateThemeIcons();
+                });
+
+                tabButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        const targetTab = button.dataset.tab;
+                        if (targetTab === 'diary' && !diaryUnlocked) {
+                            handlePasswordCheck();
+                            return;
+                        }
+                        if (targetTab === 'diary' && diaryUnlocked) {
+                            renderDiaryUI();
+                        }
+                        tabButtons.forEach(btn => {
+                            btn.classList.remove('active', 'text-blue-600', 'border-blue-600');
+                            btn.classList.add('text-slate-500');
+                        });
+                        button.classList.add('active', 'text-blue-600', 'border-blue-600');
+                        tabContents.forEach(content => {
+                            if (content.id === `${targetTab}-content`) {
+                                content.classList.remove('hidden');
+                            } else {
+                                content.classList.add('hidden');
+                            }
+                        });
+                    });
+                });
+                
+                loadReviews();
+                const starInputContainer = document.getElementById('star-rating-input');
+                renderStars(starInputContainer, 0, true);
+                starInputContainer.addEventListener('click', e => {
+                    const star = e.target.closest('svg');
+                    if (star && star.dataset.value) {
+                        const rating = parseInt(star.dataset.value, 10);
+                        starInputContainer.dataset.rating = rating;
+                        renderStars(starInputContainer, rating, true);
+                    }
+                });
+                document.getElementById('review-form').addEventListener('submit', e => {
+                    e.preventDefault();
+                    if (!currentLocationKey) {
+                        showToast('지도에서 리뷰를 남길 장소를 먼저 선택해주세요.', 'error');
+                        return;
+                    }
+                    const newReview = {
+                        id: Date.now(),
+                        rating: parseInt(starInputContainer.dataset.rating, 10),
+                        text: document.getElementById('review-text').value,
+                        date: new Date().toISOString()
+                    };
+                    if (newReview.rating === 0 || !newReview.text.trim()) {
+                        showToast('별점과 리뷰 내용을 모두 입력해주세요.', 'error');
+                        return;
+                    }
+                    if (!reviews[currentLocationKey]) {
+                        reviews[currentLocationKey] = [];
+                    }
+                    reviews[currentLocationKey].unshift(newReview);
+                    saveReviews();
+                    renderReviews();
+                    e.target.reset();
+                    starInputContainer.dataset.rating = 0;
+                    renderStars(starInputContainer, 0, true);
+                    showToast('리뷰가 성공적으로 등록되었습니다.');
+                });
+                 document.getElementById('sort-reviews').addEventListener('change', renderReviews);
+                
+                loadDiaryData();
+
+                const moodSelector = diaryEntryModal.querySelector('#diary-mood-selector');
+                const moodInput = diaryEntryModal.querySelector('#diary-mood');
+                moodSelector.addEventListener('click', (e) => {
+                    const targetSpan = e.target.closest('span[data-mood]');
+                    if (!targetSpan) return;
+                    moodSelector.querySelectorAll('span').forEach(s => s.classList.remove('scale-125', 'ring-2', 'ring-blue-500', 'rounded-full'));
+                    targetSpan.classList.add('scale-125', 'ring-2', 'ring-blue-500', 'rounded-full');
+                    moodInput.value = targetSpan.dataset.mood;
+                });
+
+                document.getElementById('diary-photo-input').addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    const previewContainer = document.getElementById('diary-photo-preview-container');
+                    reader.onload = (event) => {
+                        previewContainer.innerHTML = `<img src="${event.target.result}" class="max-h-40 rounded-lg">`;
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+            
+            // --- 앱 시작 ---
+            initializeApp();
+            
+            // --- 다이어리 폼 제출 이벤트 ---
+            document.getElementById('diary-entry-form').addEventListener('submit', e => {
+                e.preventDefault();
+                const form = e.target;
+                const id = form['diary-entry-id'].value;
+                const fileInput = document.getElementById('diary-photo-input');
+                const file = fileInput.files[0];
+
+                const processEntry = (photoData) => {
+                    const entry = {
+                        id: id ? parseInt(id) : Date.now(),
+                        title: form['diary-title'].value,
+                        content: form['diary-content-text'].value,
+                        photo: photoData,
+                        mood: document.getElementById('diary-mood').value,
+                        tags: form['diary-tags'].value.split(',').map(tag => tag.trim()).filter(Boolean),
+                        date: id ? diaryEntries.find(item => item.id == id).date : new Date().toISOString()
+                    };
+                    
+                    if (id) {
+                        const index = diaryEntries.findIndex(item => item.id == id);
+                        if (index !== -1) diaryEntries[index] = entry;
+                    } else {
+                        diaryEntries.push(entry);
+                    }
+                    saveDiaryData();
+                    renderDiaryUI();
+                    closeModal(diaryEntryModal);
+                    showToast(id ? '기록이 수정되었습니다.' : '새로운 기록이 저장되었습니다.');
+                };
+
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => processEntry(e.target.result);
+                    reader.readAsDataURL(file);
+                } else {
+                    const imageRemoved = document.getElementById('image-removed-flag');
+                    if (imageRemoved) {
+                        processEntry('');
+                    } else {
+                        const existingPhoto = document.getElementById('existing-photo-data');
+                        processEntry(existingPhoto ? existingPhoto.value : '');
+                    }
+                }
+            });
+
+            // --- 모달 닫기 버튼 이벤트 ---
+             diaryEntryModal.querySelector('.cancel-modal-btn').addEventListener('click', () => closeModal(diaryEntryModal));
+             diaryEntryModal.querySelector('.close-modal-btn').addEventListener('click', () => closeModal(diaryEntryModal));
+        });
+    </script>
+    <!-- ※ 중요: 'AIzaSyAFV55FTYlWwd-9VLOWwI3JVMnC05RGI_Q'를 발급받은 본인의 API 키로 반드시 교체해야 합니다. -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFV55FTYlWwd-9VLOWwI3JVMnC05RGI_Q&libraries=places&callback=initMap" async defer></script>
+</body>
+</html>
+
