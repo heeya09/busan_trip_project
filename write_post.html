@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>부산 쉼표 - 새 글 작성</title>
+    <link rel="stylesheet" href="style.css"> <link rel="stylesheet" href="write_post_style.css"> </head>
+<body>
+    <div class="write-container">
+        <header class="page-header">
+            <a href="community.html" class="back-btn">←</a>
+            <h2>새 여행기 작성</h2>
+        </header>
+
+        <main class="write-form">
+            <input type="text" id="post-title" placeholder="매력적인 제목을 붙여주세요">
+            
+            <div class="tag-editor">
+                <input type="text" id="post-tags" placeholder="태그 입력 후 Enter 또는 스페이스바를 누르세요 (예: #해운대)">
+                <div id="tag-list" class="tag-list"></div>
+            </div>
+
+            <textarea id="post-content" placeholder="어떤 여행이었나요? 당신의 경험을 자유롭게 공유해주세요."></textarea>
+
+            <div class="file-upload">
+                <label for="post-photos">📷 사진 첨부하기</label>
+                <input type="file" id="post-photos" multiple>
+            </div>
+            
+            <div class="form-buttons">
+                <button id="cancel-btn">취소</button>
+                <button id="submit-btn">등록하기</button>
+            </div>
+        </main>
+    </div>
+
+    <script src="write_post_script.js"></script>
+</body>
+</html>
