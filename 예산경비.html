@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="ko" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>고급 여행 경비 플래너</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    <style>
+        /* 기본 폰트 설정 */
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+        }
+        /* 스크롤바 디자인 (선택 사항) */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        .dark ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        
+        /* Modal & Toast transition styles */
+        .modal-backdrop { transition: opacity 0.3s ease-in-out; }
+        .modal-content, .toast { transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out; }
+    </style>
+</head>
+<body class="antialiased text-slate-700 bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
+
+    <!-- 글로벌 네비게이션 헤더 -->
+    <nav class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800">
+        <div class="container mx-auto px-4 md:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- 왼쪽: 로고 -->
+                <a href="#" class="flex items-center">
+                    <span class="text-xl font-bold text-blue-600 dark:text-blue-500" data-lang="logo">부산쉼표 🌊</span>
+                </a>
+
+                <!-- 오른쪽: 사용자 옵션 -->
+                <div class="flex items-center gap-4">
+                    <!-- 언어 설정 드롭다운 -->
+                    <div class="relative">
+                        <button id="lang-toggle" class="flex items-center gap-1 p-2 rounded-full text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-globe"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+                           <span id="current-lang-text" class="text-sm font-medium">KO</span>
+                        </button>
+                        <div id="lang-dropdown" class="absolute top-full right-0 mt-2 w-32 bg-white dark:bg-slate-800 rounded-lg shadow-lg border dark:border-slate-700 hidden">
+                            <a href="#" class="lang-option block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700" data-lang-value="ko">한국어</a>
+                            <a href="#" class="lang-option block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700" data-lang-value="en">English</a>
+                        </div>
+                    </div>
+
+                    <!-- 다크 모드 토글 -->
+                    <button id="dark-mode-toggle" class="p-2 rounded-full text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                        <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun hidden"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                        <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon hidden"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                    </button>
+
+                    <!-- 사용자 프로필 -->
+                    <a href="#" class="flex items-center gap-3">
+                        <img src="https://placehold.co/40x40/E2E8F0/475569?text=User" alt="User profile" class="w-9 h-9 rounded-full border-2 border-slate-200 dark:border-slate-700">
+                        <span class="font-semibold text-slate-700 dark:text-slate-200 hidden sm:block" data-lang="username">사용자 닉네임</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+
+        <!-- 페이지 헤더 -->
+        <header class="flex flex-wrap justify-between items-center gap-4 mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-slate-800 dark:text-slate-100" data-lang="pageTitle">여행 경비 플래너</h1>
+                <p class="text-slate-500 dark:text-slate-400 mt-1" data-lang="pageSubtitle">간편하게 여행 예산을 계획하고 지출을 관리하세요.</p>
+            </div>
+            <button id="scenario-generator-btn" class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                <span class="text-violet-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-wand-sparkles"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2 18.12V22h3.88l14.76-14.76a1.21 1.21 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg>
+                </span>
+                <span class="font-semibold text-slate-700 dark:text-slate-200" data-lang="scenarioGeneratorBtn">예산 시나리오 생성기</span>
+            </button>
+        </header>
+
+        <main class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- 왼쪽 섹션: 입력 및 요약 -->
+            <aside class="lg:col-span-1 flex flex-col gap-8">
+                
+                <!-- 예산 설정 카드 -->
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-md border border-slate-200 dark:border-slate-700">
+                    <h2 class="text-xl font-semibold mb-4 text-slate-800 dark:text-slate-100" data-lang="setBudgetTitle">총 예산 설정</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="total-budget-input" class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1" data-lang="summaryTotal">총 예산</label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">₩</span>
+                                <input type="number" id="total-budget-input" data-lang-placeholder="totalBudgetPlaceholder" placeholder="총 예산을 입력하세요" class="w-full pl-7 pr-4 py-3 bg-slate-100 dark:bg-slate-700 dark:text-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition border border-slate-200 dark:border-slate-600">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="travel-days-input" class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1" data-lang="travelDaysLabel">여행 일수</label>
+                            <input type="number" id="travel-days-input" min="1" data-lang-placeholder="travelDaysPlaceholder" placeholder="일수 입력" class="w-full px-4 py-3 bg-slate-100 dark:bg-slate-700 dark:text-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition border border-slate-200 dark:border-slate-600">
+                        </div>
+                    </div>
+                    <button id="set-budget-btn" data-lang="setBudgetBtn" class="w-full mt-4 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/20 dark:shadow-blue-900/50">예산 설정</button>
+                </div>
+                
+                <!-- 경비 요약 카드 -->
+                <div id="summary-card" class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-md hidden border border-slate-200 dark:border-slate-700">
+                    <h2 class="text-xl font-semibold mb-4 text-slate-800 dark:text-slate-100" data-lang="summaryTitle">경비 요약</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between items-baseline mb-1">
+                                <span class="font-medium text-slate-600 dark:text-slate-300" data-lang="summaryTotal">총 예산</span>
+                                <span id="summary-total-budget" class="text-2xl font-bold text-slate-800 dark:text-slate-100">₩0</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-baseline mb-1">
+                                <span class="font-medium text-slate-600 dark:text-slate-300" data-lang="summarySpent">총 지출</span>
+                                <span id="summary-total-spent" class="text-2xl font-bold text-red-500">₩0</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-baseline mb-1">
+                                <span class="font-medium text-slate-600 dark:text-slate-300" data-lang="summaryRemaining">남은 금액</span>
+                                <span id="summary-remaining" class="text-2xl font-bold text-emerald-500">₩0</span>
+                            </div>
+                        </div>
+                        <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-4 mt-2">
+                            <div id="budget-progress-bar" class="bg-blue-500 h-4 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                        <p id="progress-text" class="text-center text-sm text-slate-500 dark:text-slate-400 mt-1">0% 사용</p>
+                    </div>
+                     <div class="border-t border-slate-200 dark:border-slate-700 mt-6 pt-4">
+                        <button id="reset-budget-btn" data-lang="resetBudgetBtn" class="w-full flex items-center justify-center gap-2 bg-red-50 text-red-600 font-bold py-2.5 rounded-lg hover:bg-red-100 dark:bg-red-900/50 dark:text-red-400 dark:hover:bg-red-900 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-cw"><path d="M21 2v6h-6"/><path d="M21 13a9 9 0 1 1-3-7.7L21 8"/></svg>
+                            예산 초기화
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 지출 분석 차트 -->
+                <div id="chart-card" class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-md hidden border border-slate-200 dark:border-slate-700">
+                    <h2 class="text-xl font-semibold mb-4 text-slate-800 dark:text-slate-100" data-lang="chartTitle">지출 분석</h2>
+                    <div id="donut-chart-container" class="flex justify-center items-center h-48">
+                        <!-- Donut chart will be rendered here -->
+                    </div>
+                    <div id="chart-legend" class="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                        <!-- Chart legend will be rendered here -->
+                    </div>
+                </div>
+
+                <!-- 지출 항목 추가 카드 -->
+                <div id="add-expense-card" class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-md hidden border border-slate-200 dark:border-slate-700">
+                    <h2 class="text-xl font-semibold mb-4 text-slate-800 dark:text-slate-100" data-lang="addExpenseTitle">지출 항목 추가</h2>
+                    <form id="expense-form" class="space-y-4">
+                        <div>
+                            <label for="expense-day" class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1" data-lang="dayLabel">날짜</label>
+                            <select id="expense-day" name="day" required class="w-full p-3 bg-slate-100 dark:bg-slate-700 dark:text-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition border border-slate-200 dark:border-slate-600"></select>
+                        </div>
+                        <div>
+                            <label for="category" class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1" data-lang="categoryLabel">카테고리</label>
+                            <select id="category" name="category" required class="w-full p-3 bg-slate-100 dark:bg-slate-700 dark:text-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition border border-slate-200 dark:border-slate-600"></select>
+                        </div>
+                        <div>
+                            <label for="amount" class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1" data-lang="amountLabel">금액</label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">₩</span>
+                                <input type="number" id="amount" name="amount" data-lang-placeholder="amountPlaceholder" placeholder="지출 금액" required class="w-full pl-8 pr-4 py-3 bg-slate-100 dark:bg-slate-700 dark:text-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition border border-slate-200 dark:border-slate-600">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="description" class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1" data-lang="descLabel">내용</label>
+                            <input type="text" id="description" name="description" data-lang-placeholder="descPlaceholder" placeholder="사용 내역 (예: 시티즌 호텔)" required class="w-full p-3 bg-slate-100 dark:bg-slate-700 dark:text-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition border border-slate-200 dark:border-slate-600">
+                        </div>
+                        <button type="submit" class="w-full bg-emerald-500 text-white font-bold py-3 rounded-lg hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-500/20 dark:shadow-emerald-900/50" data-lang="addExpenseBtn">지출 추가</button>
+                    </form>
+                </div>
+
+            </aside>
+
+            <!-- 오른쪽 섹션: 지출 목록 -->
+            <section class="lg:col-span-2">
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-md min-h-[600px] border border-slate-200 dark:border-slate-700">
+                    <div id="expense-list-header" class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-semibold text-slate-800 dark:text-slate-100" data-lang="expenseListTitle">지출 내역</h2>
+                        <div id="daily-total-display" class="hidden text-right">
+                             <span class="text-sm text-slate-500 dark:text-slate-400" data-lang="dailyTotal">일일 합계</span>
+                             <p class="font-bold text-lg text-red-500">₩0</p>
+                        </div>
+                    </div>
+                    <div id="day-tabs-container" class="border-b border-slate-200 dark:border-slate-700 -mx-6 px-6 mb-4">
+                        <nav id="day-tabs" class="flex space-x-4 overflow-x-auto"></nav>
+                    </div>
+                    <div id="expense-list-content" class="overflow-x-auto">
+                        <!-- Empty State is now managed by JS -->
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+    
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-5 right-5 z-[100] space-y-3"></div>
+
+    <!-- Modals (Edit, Delete, Scenario, Reset) -->
+    <div id="edit-modal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 hidden opacity-0">
+        <div class="modal-content bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-md p-6 transform scale-95 opacity-0">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-slate-800 dark:text-slate-100" data-lang="editExpenseTitle">지출 항목 수정</h2>
+                <button id="close-edit-modal-btn" class="p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+            <form id="edit-expense-form" class="space-y-4">
+                <input type="hidden" id="edit-id">
+                <div>
+                     <label for="edit-day" class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1" data-lang="dayLabel">날짜</label>
+                     <select id="edit-day" name="day" required class="w-full p-3 bg-slate-100 dark:bg-slate-700 dark:text-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition border border-slate-200 dark:border-slate-600"></select>
+                </div>
+                <div>
+                    <label for="edit-category" class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1" data-lang="categoryLabel">카테고리</label>
+                    <select id="edit-category" name="category" required class="w-full p-3 bg-slate-100 dark:bg-slate-700 dark:text-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition border border-slate-200 dark:border-slate-600"></select>
+                </div>
+                <div>
+                    <label for="edit-amount" class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1" data-lang="amountLabel">금액</label>
+                     <div class="relative"><span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">₩</span><input type="number" id="edit-amount" name="amount" placeholder="지출 금액" required class="w-full pl-8 pr-4 py-3 bg-slate-100 dark:bg-slate-700 dark:text-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition"></div>
+                </div>
+                <div>
+                    <label for="edit-description" class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1" data-lang="descLabel">내용</label>
+                    <input type="text" id="edit-description" name="description" placeholder="사용 내역" required class="w-full p-3 bg-slate-100 dark:bg-slate-700 dark:text-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+                </div>
+                <div class="flex gap-4 pt-4">
+                    <button type="button" id="cancel-edit-btn" class="w-full bg-slate-200 dark:bg-slate-600 text-slate-800 dark:text-slate-100 font-bold py-3 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-500 transition-colors" data-lang="cancelBtn">취소</button>
+                    <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition-colors" data-lang="saveBtn">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="delete-modal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 hidden opacity-0">
+        <div class="modal-content bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-sm p-6 text-center transform scale-95 opacity-0">
+            <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-800/50 sm:mx-0 sm:h-10 sm:w-10">
+                <svg class="h-6 w-6 text-red-600 dark:text-red-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-100 mt-4" data-lang="deleteModalTitle">항목 삭제</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-2" data-lang="deleteModalDesc">이 항목을 정말로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.</p>
+            <div class="flex gap-4 mt-6">
+                <button id="cancel-delete-btn" class="w-full bg-slate-200 dark:bg-slate-600 text-slate-800 dark:text-slate-100 font-bold py-2.5 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-500 transition-colors" data-lang="cancelBtn">취소</button>
+                <button id="confirm-delete-btn" class="w-full bg-red-600 text-white font-bold py-2.5 rounded-lg hover:bg-red-700 transition-colors" data-lang="deleteBtn">삭제</button>
+            </div>
+        </div>
+    </div>
+     <div id="reset-modal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 hidden opacity-0">
+        <div class="modal-content bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-sm p-6 text-center transform scale-95 opacity-0">
+            <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-800/50 sm:mx-0 sm:h-10 sm:w-10">
+                <svg class="h-6 w-6 text-red-600 dark:text-red-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-100 mt-4" data-lang="resetModalTitle">예산 초기화</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-2" data-lang="resetModalDesc">모든 예산과 지출 내역이 삭제됩니다. 정말로 초기화하시겠습니까?</p>
+            <div class="flex gap-4 mt-6">
+                <button id="cancel-reset-btn" class="w-full bg-slate-200 dark:bg-slate-600 text-slate-800 dark:text-slate-100 font-bold py-2.5 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-500 transition-colors" data-lang="cancelBtn">취소</button>
+                <button id="confirm-reset-btn" class="w-full bg-red-600 text-white font-bold py-2.5 rounded-lg hover:bg-red-700 transition-colors" data-lang="resetBtn">초기화</button>
+            </div>
+        </div>
+    </div>
+    <div id="scenario-modal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 hidden opacity-0">
+         <div class="modal-content bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-4xl p-6 transform scale-95 opacity-0">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-slate-800 dark:text-slate-100" data-lang="scenarioModalTitle">예산 시나리오 제안</h2>
+                <button id="close-scenario-modal-btn" class="p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+            <p class="text-slate-500 dark:text-slate-400 mb-6" data-lang="scenarioModalDesc">설정된 총 예산을 바탕으로 3가지 여행 스타일의 예산 분배를 제안합니다.</p>
+            <div id="scenario-results" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- 번역 데이터 ---
+            const translations = {
+                ko: {
+                    logo: '부산쉼표 🌊', username: '사용자 닉네임', pageTitle: '여행 경비 플래너', pageSubtitle: '간편하게 여행 예산을 계획하고 지출을 관리하세요.',
+                    scenarioGeneratorBtn: '예산 시나리오 생성기', setBudgetTitle: '총 예산 설정', totalBudgetPlaceholder: '총 예산을 입력하세요',
+                    setBudgetBtn: '예산 설정', summaryTitle: '경비 요약', summaryTotal: '총 예산', summarySpent: '총 지출', summaryRemaining: '남은 금액',
+                    addExpenseTitle: '지출 항목 추가', categoryLabel: '카테고리', catAccom: '숙소 🏨', catTransport: '교통 🚌', catFood: '식비 🍔',
+                    catShopping: '쇼핑 🛍️', catSightseeing: '관광 🏛️', catEtc: '기타 💸', amountLabel: '금액', amountPlaceholder: '지출 금액',
+                    descLabel: '내용', descPlaceholder: '사용 내역 (예: 시티즌 호텔)', addExpenseBtn: '지출 추가', expenseListTitle: '지출 내역',
+                    emptyList: '지출 내역이 없습니다.', emptyListDesc: '먼저 예산을 설정하고 지출을 추가해보세요.',
+                    progressText: (p) => `${p.toFixed(1)}% 사용`, editExpenseTitle: '지출 항목 수정', cancelBtn: '취소', saveBtn: '저장',
+                    scenarioModalTitle: '예산 시나리오 제안', scenarioModalDesc: '설정된 총 예산을 바탕으로 3가지 여행 스타일의 예산 분배를 제안합니다.',
+                    scenarioLow: '알뜰형 💰', scenarioMid: '표준형 ✈️', scenarioHigh: '고급형 💎',
+                    alertNoBudgetForScenario: '시나리오를 생성하려면 먼저 총 예산을 설정해야 합니다.',
+                    toastBudgetSet: '예산이 설정되었습니다.', toastExpenseAdded: '지출 항목이 추가되었습니다.', toastExpenseUpdated: '항목이 수정되었습니다.',
+                    toastExpenseDeleted: '항목이 삭제되었습니다.', deleteModalTitle: '항목 삭제', deleteModalDesc: '이 항목을 정말로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.',
+                    chartTitle: '지출 분석', chartNoData: '차트를 표시할 지출 데이터가 없습니다.',
+                    resetBudgetBtn: '예산 초기화', resetModalTitle: '예산 초기화', resetModalDesc: '모든 예산과 지출 내역이 삭제됩니다. 정말로 초기화하시겠습니까?',
+                    deleteBtn: '삭제', resetBtn: '초기화', toastBudgetReset: '모든 데이터가 초기화되었습니다.',
+                    travelDaysLabel: '여행 일수', travelDaysPlaceholder: '일수 입력', dayLabel: '날짜', dayN: (n) => `${n}일차`, allDays: '전체', dailyTotal: '일일 합계'
+                },
+                en: {
+                    logo: 'Busan Comma 🌊', username: 'Username', pageTitle: 'Travel Budget Planner', pageSubtitle: 'Easily plan your travel budget and manage expenses.',
+                    scenarioGeneratorBtn: 'Budget Scenario Generator', setBudgetTitle: 'Set Total Budget', totalBudgetPlaceholder: 'Enter total budget',
+                    setBudgetBtn: 'Set Budget', summaryTitle: 'Expense Summary', summaryTotal: 'Total Budget', summarySpent: 'Total Spent', summaryRemaining: 'Remaining',
+                    addExpenseTitle: 'Add Expense', categoryLabel: 'Category', catAccom: 'Accommodation 🏨', catTransport: 'Transport 🚌', catFood: 'Food 🍔',
+                    catShopping: 'Shopping 🛍️', catSightseeing: 'Sightseeing 🏛️', catEtc: 'Etc 💸', amountLabel: 'Amount', amountPlaceholder: 'Expense amount',
+                    descLabel: 'Description', descPlaceholder: 'Details (e.g., Citizen Hotel)', addExpenseBtn: 'Add Expense', expenseListTitle: 'Expense List',
+                    emptyList: 'No expenses recorded.', emptyListDesc: 'Set a budget and add an expense to get started.',
+                    progressText: (p) => `${p.toFixed(1)}% Used`, editExpenseTitle: 'Edit Expense Item', cancelBtn: 'Cancel', saveBtn: 'Save',
+                    scenarioModalTitle: 'Budget Scenario Suggestions', scenarioModalDesc: 'Here are three budget allocation suggestions based on your total budget.',
+                    scenarioLow: 'Budget-Friendly 💰', scenarioMid: 'Standard ✈️', scenarioHigh: 'Luxury 💎',
+                    alertNoBudgetForScenario: 'You must set a total budget before generating scenarios.',
+                    toastBudgetSet: 'Budget has been set.', toastExpenseAdded: 'Expense added successfully.', toastExpenseUpdated: 'Expense updated.',
+                    toastExpenseDeleted: 'Expense deleted.', deleteModalTitle: 'Delete Item', deleteModalDesc: 'Are you sure you want to delete this item? This action cannot be undone.',
+                    chartTitle: 'Expense Analysis', chartNoData: 'No expense data to display chart.',
+                    resetBudgetBtn: 'Reset Budget', resetModalTitle: 'Reset Budget', resetModalDesc: 'All budget and expense data will be deleted. Are you sure you want to reset?',
+                    deleteBtn: 'Delete', resetBtn: 'Reset', toastBudgetReset: 'All data has been reset.',
+                    travelDaysLabel: 'Travel Days', travelDaysPlaceholder: 'Enter days', dayLabel: 'Day', dayN: (n) => `Day ${n}`, allDays: 'All', dailyTotal: 'Daily Total'
+                }
+            };
+
+            // --- 상태 관리 ---
+            let currentLang = localStorage.getItem('language') || 'ko';
+            let totalBudget = 0;
+            let travelDays = 0;
+            let activeDay = 'all';
+            let expenses = [];
+            let nextId = 0;
+            let itemToDeleteId = null;
+            const categories = ['Accom', 'Transport', 'Food', 'Shopping', 'Sightseeing', 'Etc'];
+            const categoryColors = { 숙소: '#3b82f6', 교통: '#06b6d4', 식비: '#f59e0b', 쇼핑: '#8b5cf6', 관광: '#ec4899', 기타: '#6b7280' };
+
+            // --- DOM 요소 ---
+            const allModals = document.querySelectorAll('.modal-backdrop');
+            const editModal = document.getElementById('edit-modal');
+            const deleteModal = document.getElementById('delete-modal');
+            const resetModal = document.getElementById('reset-modal');
+            const scenarioModal = document.getElementById('scenario-modal');
+            const expenseListContent = document.getElementById('expense-list-content');
+            const dayTabsContainer = document.getElementById('day-tabs');
+            const dailyTotalDisplay = document.getElementById('daily-total-display');
+            const summaryCard = document.getElementById('summary-card');
+            const addExpenseCard = document.getElementById('add-expense-card');
+            const chartCard = document.getElementById('chart-card');
+
+            // --- 모든 함수 (호출 전에 정의) ---
+
+            const formatCurrency = (amount) => new Intl.NumberFormat('ko-KR').format(Math.round(amount));
+
+            const showToast = (message, type = 'success') => {
+                 const colors = { success: 'bg-emerald-500', error: 'bg-red-500', info: 'bg-blue-500' };
+                 const toastContainer = document.getElementById('toast-container');
+                 const toast = document.createElement('div');
+                 
+                 toast.className = `toast flex items-center w-full max-w-xs p-4 text-white ${colors[type]} rounded-lg shadow-lg opacity-0 transform translate-y-5`;
+                 toast.innerHTML = `<span>${message}</span>`;
+                 toastContainer.appendChild(toast);
+
+                 requestAnimationFrame(() => {
+                    toast.classList.remove('opacity-0', 'translate-y-5');
+                 });
+
+                 setTimeout(() => {
+                     toast.classList.add('opacity-0');
+                     toast.addEventListener('transitionend', () => toast.remove());
+                 }, 3000);
+            };
+
+            const openModal = (modal) => {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    modal.querySelector('.modal-content').classList.remove('scale-95', 'opacity-0');
+                }, 10);
+            };
+
+            const closeModal = (modal) => {
+                modal.classList.add('opacity-0');
+                modal.querySelector('.modal-content').classList.add('scale-95', 'opacity-0');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            };
+
+            const loadData = () => {
+                const savedBudget = localStorage.getItem('travelBudget');
+                const savedDays = localStorage.getItem('travelDays');
+                const savedExpenses = localStorage.getItem('travelExpenses');
+
+                if (savedBudget) {
+                    totalBudget = parseFloat(savedBudget);
+                    document.getElementById('total-budget-input').value = totalBudget;
+                }
+                if (savedDays) {
+                    travelDays = parseInt(savedDays, 10);
+                     document.getElementById('travel-days-input').value = travelDays;
+                }
+                if (savedExpenses) {
+                    expenses = JSON.parse(savedExpenses);
+                    nextId = expenses.length > 0 ? Math.max(...expenses.map(e => e.id)) + 1 : 0;
+                }
+            };
+
+            const saveData = () => {
+                localStorage.setItem('travelBudget', totalBudget);
+                localStorage.setItem('travelDays', travelDays);
+                localStorage.setItem('travelExpenses', JSON.stringify(expenses));
+            };
+
+            const populateCategorySelect = (selectElement) => {
+                selectElement.innerHTML = '';
+                categories.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = translations['ko']['cat'+cat].split(' ')[0];
+                    option.textContent = translations[currentLang]['cat'+cat];
+                    selectElement.appendChild(option);
+                });
+            };
+
+            const populateDaySelects = () => {
+                const selects = [document.getElementById('expense-day'), document.getElementById('edit-day')];
+                selects.forEach(select => {
+                    if (!select) return;
+                    select.innerHTML = '';
+                    for (let i = 1; i <= travelDays; i++) {
+                        const option = document.createElement('option');
+                        option.value = i;
+                        option.textContent = translations[currentLang].dayN(i);
+                        select.appendChild(option);
+                    }
+                });
+            };
+
+            const updateSummary = () => {
+                 if (totalBudget <= 0) return;
+                const totalSpent = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+                const remaining = totalBudget - totalSpent;
+                const percentageSpent = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
+
+                document.getElementById('summary-total-budget').textContent = `₩${formatCurrency(totalBudget)}`;
+                document.getElementById('summary-total-spent').textContent = `₩${formatCurrency(totalSpent)}`;
+                document.getElementById('summary-remaining').textContent = `₩${formatCurrency(remaining)}`;
+                
+                const progressBar = document.getElementById('budget-progress-bar');
+                progressBar.style.width = `${Math.min(percentageSpent, 100)}%`;
+                document.getElementById('progress-text').textContent = translations[currentLang].progressText(percentageSpent);
+
+                progressBar.className = 'h-4 rounded-full transition-all duration-500';
+                if (percentageSpent > 90) progressBar.classList.add('bg-red-500');
+                else if (percentageSpent > 70) progressBar.classList.add('bg-yellow-500');
+                else progressBar.classList.add('bg-blue-500');
+            };
+            
+            const renderDayTabs = () => {
+                dayTabsContainer.innerHTML = '';
+                const allTab = document.createElement('a');
+                allTab.href = '#';
+                allTab.dataset.day = 'all';
+                allTab.textContent = translations[currentLang].allDays;
+                allTab.className = `day-tab whitespace-nowrap py-2 px-4 font-semibold text-sm rounded-t-lg transition-colors ${activeDay === 'all' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-slate-500 hover:text-blue-600'}`;
+                dayTabsContainer.appendChild(allTab);
+
+                for (let i = 1; i <= travelDays; i++) {
+                    const dayTab = document.createElement('a');
+                    dayTab.href = '#';
+                    dayTab.dataset.day = i;
+                    dayTab.textContent = translations[currentLang].dayN(i);
+                    dayTab.className = `day-tab whitespace-nowrap py-2 px-4 font-semibold text-sm rounded-t-lg transition-colors ${activeDay == i ? 'text-blue-600 border-b-2 border-blue-600' : 'text-slate-500 hover:text-blue-600'}`;
+                    dayTabsContainer.appendChild(dayTab);
+                }
+            };
+            
+            const renderExpensesForDay = () => {
+                const filteredExpenses = (activeDay === 'all') ? expenses : expenses.filter(e => e.day == activeDay);
+                expenseListContent.innerHTML = '';
+
+                if (filteredExpenses.length === 0) {
+                     expenseListContent.innerHTML = `<div class="text-center p-16">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-archive mx-auto text-slate-300 dark:text-slate-600"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg>
+                            <p class="mt-4 text-slate-400 dark:text-slate-500">${travelDays > 0 ? translations[currentLang].emptyList.replace('지출 내역이','이 날의 지출 내역이') : translations[currentLang].emptyListDesc}</p>
+                        </div>`;
+                    dailyTotalDisplay.classList.add('hidden');
+                    return;
+                }
+
+                const dailyTotal = filteredExpenses.reduce((sum, exp) => sum + exp.amount, 0);
+                if (activeDay !== 'all') {
+                    dailyTotalDisplay.querySelector('p').textContent = `₩${formatCurrency(dailyTotal)}`;
+                    dailyTotalDisplay.classList.remove('hidden');
+                } else {
+                    dailyTotalDisplay.classList.add('hidden');
+                }
+
+                const groupedExpenses = filteredExpenses.reduce((acc, expense) => {
+                    (acc[expense.category] = acc[expense.category] || []).push(expense);
+                    return acc;
+                }, {});
+
+                const orderedCategories = categories.map(c => translations['ko']['cat'+c].split(' ')[0]);
+
+                orderedCategories.forEach(category => {
+                    if (!groupedExpenses[category]) return;
+
+                    const categoryWrapper = document.createElement('div');
+                    categoryWrapper.className = 'mb-4';
+                    const categoryKey = 'cat' + categories.find(c => translations['ko']['cat'+c].startsWith(category));
+                    const translatedCategory = translations[currentLang][categoryKey] || category;
+                    const categoryTotal = groupedExpenses[category].reduce((sum, exp) => sum + exp.amount, 0);
+                    
+                    categoryWrapper.innerHTML = `
+                        <div class="flex justify-between items-center bg-slate-100 dark:bg-slate-800 p-2 rounded-t-lg">
+                            <h3 class="font-semibold text-blue-600 dark:text-blue-400">${translatedCategory}</h3>
+                            <span class="font-semibold text-slate-600 dark:text-slate-300">₩${formatCurrency(categoryTotal)}</span>
+                        </div>
+                        <table class="w-full text-left"><tbody>${groupedExpenses[category].map(expense => `
+                            <tr class="border-b border-slate-100 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                                <td class="p-4 text-slate-600 dark:text-slate-300">${expense.description}</td>
+                                <td class="p-4 text-right font-semibold text-red-500 w-32">- ₩${formatCurrency(expense.amount)}</td>
+                                <td class="p-4 text-center w-24">
+                                    <button data-id="${expense.id}" class="edit-btn p-2 text-slate-400 dark:text-slate-500 hover:text-blue-600 rounded-full transition"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+                                    <button data-id="${expense.id}" class="delete-btn p-2 text-slate-400 dark:text-slate-500 hover:text-red-600 rounded-full transition"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14"x2="14" y1="11" y2="17"/></svg></button>
+                                </td>
+                            </tr>`).join('')}</tbody></table>`;
+                    expenseListContent.appendChild(categoryWrapper);
+                });
+            };
+
+            const updateDonutChart = () => {
+                const chartContainer = document.getElementById('donut-chart-container');
+                const legendContainer = document.getElementById('chart-legend');
+                chartContainer.innerHTML = '';
+                legendContainer.innerHTML = '';
+                const relevantExpenses = (activeDay === 'all') ? expenses : expenses.filter(e => e.day == activeDay);
+                const totalSpent = relevantExpenses.reduce((sum, exp) => sum + exp.amount, 0);
+
+                if (totalSpent === 0) {
+                    chartContainer.innerHTML = `<p class="text-slate-400 dark:text-slate-500 text-center">${translations[currentLang].chartNoData}</p>`;
+                    return;
+                }
+
+                const grouped = relevantExpenses.reduce((acc, { category, amount }) => {
+                    acc[category] = (acc[category] || 0) + amount;
+                    return acc;
+                }, {});
+
+                const svgNS = "http://www.w3.org/2000/svg";
+                const svg = document.createElementNS(svgNS, "svg");
+                svg.setAttribute("viewBox", "0 0 36 36");
+                svg.setAttribute("class", "w-40 h-40");
+
+                let offset = 25; // Start at 12 o'clock
+                Object.entries(grouped).forEach(([category, amount]) => {
+                    const percentage = (amount / totalSpent) * 100;
+                    const color = categoryColors[category] || '#6b7280';
+                    const circle = document.createElementNS(svgNS, "circle");
+                    circle.setAttribute("class", "fill-transparent");
+                    circle.setAttribute("stroke", color);
+                    circle.setAttribute("stroke-width", "4");
+                    circle.setAttribute("stroke-dasharray", `${percentage} ${100 - percentage}`);
+                    circle.setAttribute("stroke-dashoffset", `-${offset}`);
+                    circle.setAttribute("cx", "18");
+                    circle.setAttribute("cy", "18");
+                    circle.setAttribute("r", "15.9");
+                    svg.appendChild(circle);
+                    offset += percentage;
+                    const categoryKey = 'cat' + categories.find(c => translations['ko']['cat'+c].startsWith(category));
+                    const translatedCategory = translations[currentLang][categoryKey] || category;
+                    legendContainer.innerHTML += `<div class="flex items-center"><span class="w-3 h-3 rounded-full mr-2" style="background-color: ${color};"></span><span>${translatedCategory.split(' ')[0]} (${percentage.toFixed(0)}%)</span></div>`;
+                });
+                chartContainer.appendChild(svg);
+            };
+
+            const openEditModal = (id) => {
+                const expense = expenses.find(e => e.id === id);
+                if (!expense) return;
+                const form = document.getElementById('edit-expense-form');
+                form['edit-id'].value = expense.id;
+                form.day.value = expense.day;
+                form.category.value = expense.category;
+                form.amount.value = expense.amount;
+                form.description.value = expense.description;
+                openModal(editModal);
+            };
+
+            const openDeleteModal = (id) => {
+                itemToDeleteId = id;
+                openModal(deleteModal);
+            };
+            
+            const generateScenarios = () => {
+                 const resultsContainer = document.getElementById('scenario-results');
+                 resultsContainer.innerHTML = '';
+                 Object.entries({ low: 'emerald', mid: 'sky', high: 'violet' }).forEach(([type, color]) => {
+                     const card = document.createElement('div');
+                     card.className = `bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border-2 border-transparent hover:border-${color}-500 transition`;
+                     let detailsHtml = '';
+                     const percentages = { low: { acc: 0.25, tr: 0.15, fo: 0.4, si: 0.1, sh: 0.05, et: 0.05}, mid: { acc: 0.3, tr: 0.2, fo: 0.3, si: 0.1, sh: 0.05, et: 0.05}, high: { acc: 0.4, tr: 0.2, fo: 0.25, si: 0.05, sh: 0.05, et: 0.05 }};
+                     const cats = { acc: 'Accom', tr: 'Transport', fo: 'Food', si: 'Sightseeing', sh: 'Shopping', et: 'Etc'};
+                     Object.entries(percentages[type]).forEach(([cat, p]) => {
+                        const catKey = 'cat' + cats[cat];
+                        detailsHtml += `<div class="flex justify-between items-center text-sm py-1"><span class="flex items-center gap-2"><svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="${{Accom:'M3 12h18M12 3v18',Transport:'M12 12V3M8 3l4-2 4 2',Food:'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z',Shopping:'M16 16l-4-4-4 4',Sightseeing:'M2 12h20M12 2v20',Etc:'M12 5v14M5 12h14'}[cats[cat]] || ''}"/></svg><span class="text-slate-600 dark:text-slate-300">${translations[currentLang][catKey].split(' ')[0]}</span></span><span class="font-medium text-slate-700 dark:text-slate-200">₩${formatCurrency(totalBudget * p)}</span></div>`;
+                     });
+                     card.innerHTML = `<h3 class="font-bold text-lg text-center mb-4 text-${color}-500">${translations[currentLang]['scenario' + type.charAt(0).toUpperCase() + type.slice(1)]}</h3><div class="space-y-1">${detailsHtml}</div>`;
+                     resultsContainer.appendChild(card);
+                 });
+            };
+            
+            const setupDayView = () => {
+                populateDaySelects();
+                renderDayTabs();
+                renderExpensesForDay();
+                chartCard.classList.remove('hidden');
+                addExpenseCard.classList.remove('hidden');
+                summaryCard.classList.remove('hidden');
+            };
+
+            const setLanguage = (lang) => {
+                currentLang = lang;
+                localStorage.setItem('language', lang);
+                document.documentElement.lang = lang;
+                document.getElementById('current-lang-text').textContent = lang.toUpperCase();
+                document.querySelectorAll('[data-lang]').forEach(el => {
+                    const key = el.dataset.lang;
+                    if (translations[lang][key] && typeof translations[lang][key] === 'string') {
+                       el.textContent = translations[lang][key];
+                    }
+                });
+                document.querySelectorAll('[data-lang-placeholder]').forEach(el => {
+                    const key = el.dataset.langPlaceholder;
+                    if (translations[lang][key]) el.placeholder = translations[lang][key];
+                });
+                populateCategorySelect(document.getElementById('category'));
+                populateCategorySelect(document.getElementById('edit-category'));
+                if(travelDays > 0) {
+                    populateDaySelects();
+                    renderDayTabs();
+                    renderExpensesForDay();
+                    updateSummary();
+                    updateDonutChart();
+                };
+            };
+
+            const updateThemeIcons = () => {
+                if (document.documentElement.classList.contains('dark')) {
+                    document.getElementById('sun-icon').classList.remove('hidden');
+                    document.getElementById('moon-icon').classList.add('hidden');
+                } else {
+                    document.getElementById('sun-icon').classList.add('hidden');
+                    document.getElementById('moon-icon').classList.remove('hidden');
+                }
+            };
+            
+            const updateUI = () => {
+                updateSummary();
+                renderExpensesForDay();
+                updateDonutChart();
+            };
+
+            const resetAllData = () => {
+                totalBudget = 0;
+                travelDays = 0;
+                activeDay = 'all';
+                expenses = [];
+                nextId = 0;
+                localStorage.clear();
+                
+                document.getElementById('total-budget-input').value = '';
+                document.getElementById('travel-days-input').value = '';
+                summaryCard.classList.add('hidden');
+                addExpenseCard.classList.add('hidden');
+                chartCard.classList.add('hidden');
+                dayTabsContainer.innerHTML = '';
+                dailyTotalDisplay.classList.add('hidden');
+                renderExpensesForDay();
+                closeModal(resetModal);
+                showToast(translations[currentLang].toastBudgetReset, 'info');
+            };
+
+            // --- 초기화 ---
+            const initializeApp = () => {
+                // 동적 요소 채우기
+                ['category', 'edit-category'].forEach(id => populateCategorySelect(document.getElementById(id)));
+                
+                // 스토리지에서 데이터 로드
+                loadData();
+                
+                // 초기 언어 및 테마 설정
+                setLanguage(currentLang);
+                updateThemeIcons();
+                
+                // 데이터가 있으면 관련 섹션 표시
+                if (totalBudget > 0 && travelDays > 0) {
+                    activeDay = 1;
+                    setupDayView();
+                    updateUI();
+                }
+
+                // --- 이벤트 리스너 ---
+                document.getElementById('set-budget-btn').addEventListener('click', () => {
+                    const budgetValue = parseFloat(document.getElementById('total-budget-input').value);
+                    const daysValue = parseInt(document.getElementById('travel-days-input').value, 10);
+
+                    if (isNaN(budgetValue) || budgetValue <= 0 || isNaN(daysValue) || daysValue <= 0) {
+                        showToast(translations[currentLang].toastBudgetSet.replace('설정', '정보를 올바르게 입력해주세요'), 'error'); return;
+                    }
+                    totalBudget = budgetValue;
+                    travelDays = daysValue;
+                    activeDay = 1;
+                    
+                    setupDayView();
+                    saveData();
+                    updateUI();
+                    showToast(translations[currentLang].toastBudgetSet);
+                });
+
+                document.getElementById('expense-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const form = e.target;
+                    const newExpense = {
+                        id: nextId++,
+                        day: parseInt(form.day.value, 10),
+                        category: form.category.value,
+                        amount: parseFloat(form.amount.value),
+                        description: form.description.value.trim() || '-'
+                    };
+                    if (!newExpense.category || isNaN(newExpense.amount) || newExpense.amount <= 0) {
+                         showToast(translations[currentLang].toastExpenseAdded.replace('추가', '추가 실패'), 'error'); return;
+                    }
+                    expenses.push(newExpense);
+                    saveData();
+                    updateUI();
+                    form.reset();
+                    // Keep day selected
+                    document.getElementById('expense-day').value = newExpense.day;
+                    showToast(translations[currentLang].toastExpenseAdded);
+                });
+
+                document.getElementById('edit-expense-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const form = e.target;
+                    const id = parseInt(form['edit-id'].value);
+                    const updatedExpense = {
+                        id: id, 
+                        day: parseInt(form.day.value, 10),
+                        category: form.category.value,
+                        amount: parseFloat(form.amount.value), 
+                        description: form.description.value.trim()
+                    };
+                    const index = expenses.findIndex(exp => exp.id === id);
+                    if (index !== -1) {
+                        expenses[index] = updatedExpense;
+                        saveData();
+                        updateUI();
+                        closeModal(editModal);
+                        showToast(translations[currentLang].toastExpenseUpdated);
+                    }
+                });
+
+                document.getElementById('confirm-delete-btn').addEventListener('click', () => {
+                    if (itemToDeleteId === null) return;
+                    expenses = expenses.filter(expense => expense.id !== itemToDeleteId);
+                    saveData();
+                    updateUI();
+                    closeModal(deleteModal);
+                    showToast(translations[currentLang].toastExpenseDeleted);
+                    itemToDeleteId = null;
+                });
+                
+                document.getElementById('reset-budget-btn').addEventListener('click', () => openModal(resetModal));
+                document.getElementById('confirm-reset-btn').addEventListener('click', resetAllData);
+
+
+                expenseListContent.addEventListener('click', (e) => {
+                    const targetBtn = e.target.closest('button');
+                    if (!targetBtn) return;
+                    const id = parseInt(targetBtn.dataset.id);
+                    if (targetBtn.classList.contains('delete-btn')) openDeleteModal(id);
+                    else if (targetBtn.classList.contains('edit-btn')) openEditModal(id);
+                });
+                
+                dayTabsContainer.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetTab = e.target.closest('.day-tab');
+                    if(targetTab && targetTab.dataset.day !== activeDay) {
+                        activeDay = targetTab.dataset.day;
+                        renderDayTabs();
+                        updateUI();
+                    }
+                });
+
+                document.getElementById('scenario-generator-btn').addEventListener('click', () => {
+                     if (totalBudget <= 0) { showToast(translations[currentLang].alertNoBudgetForScenario, 'info'); return; }
+                     generateScenarios();
+                     openModal(scenarioModal);
+                });
+                
+                allModals.forEach(modal => {
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) closeModal(modal);
+                    });
+                     modal.querySelectorAll('button[id^="close-"], button[id^="cancel-"]').forEach(btn => {
+                        btn.addEventListener('click', () => closeModal(modal));
+                     });
+                });
+
+                document.getElementById('dark-mode-toggle').addEventListener('click', () => {
+                    document.documentElement.classList.toggle('dark');
+                    localStorage.setItem('color-theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+                    updateThemeIcons();
+                });
+
+                document.getElementById('lang-toggle').addEventListener('click', () => document.getElementById('lang-dropdown').classList.toggle('hidden'));
+                document.querySelectorAll('.lang-option').forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        setLanguage(e.target.dataset.langValue);
+                        document.getElementById('lang-dropdown').classList.add('hidden');
+                    });
+                });
+
+                document.addEventListener('click', (e) => {
+                    const langToggle = document.getElementById('lang-toggle');
+                    const langDropdown = document.getElementById('lang-dropdown');
+                    if (langToggle && langDropdown && !langToggle.contains(e.target) && !langDropdown.contains(e.target)) {
+                        langDropdown.classList.add('hidden');
+                    }
+                });
+            };
+
+            // --- 앱 시작 ---
+            initializeApp();
+        });
+    </script>
+</body>
+</html>
+
