@@ -86,3 +86,18 @@ footer { text-align: center; margin-top: 40px; }
 .modal-buttons button { flex: 1; padding: 12px; border-radius: 8px; border: none; font-size: 16px; font-weight: 700; cursor: pointer; }
 #cancel-trip-btn { background-color: #f0f0f0; color: #555; }
 #save-trip-btn { background-color: #007bff; color: white; }
+/* ===== ▼ 반응형 웹을 위한 코드 (스마트폰용) ▼ ===== */
+
+/* 화면 가로 크기가 768px보다 작아질 때 아래의 디자인을 적용합니다. */
+@media (max-width: 768px) {
+    .list-container {
+        /* 스마트폰에서는 좌우 여백을 줄입니다. */
+        padding: 10px;
+        margin: 20px auto;
+    }
+
+    .trip-card {
+        /* 카드 안의 여백을 살짝 줄여서 좁은 화면에 맞춥니다. */
+        padding: 20px;
+    }
+}

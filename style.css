@@ -11,6 +11,7 @@ body {
     padding: 20px;
     box-sizing: border-box;
 }
+
 .survey-container {
     background-color: white;
     width: 100%;
@@ -38,7 +39,7 @@ header h2 {
 
 .question-card {
     margin-bottom: 30px;
-    min-height: 300px; /* 질문 내용이 바뀌어도 높이 유지 */
+    min-height: 300px;
 }
 
 .question-number {
@@ -50,7 +51,7 @@ h3 {
     font-size: 22px;
     color: #333;
     margin-top: 10px;
-    line-height: 1.5; /* 줄간격 */
+    line-height: 1.5;
 }
 
 .options {
@@ -94,7 +95,7 @@ footer {
 }
 
 .nav-btn {
-    flex: 1; /* 버튼이 공간을 똑같이 차지하도록 */
+    flex: 1;
     border: none;
     border-radius: 10px;
     padding: 15px 0;
@@ -120,4 +121,35 @@ footer {
 
 .nav-btn.prev:hover {
     background-color: #e0e0e0;
+}
+
+
+/* ===== ▼ 반응형 웹을 위한 코드 (스마트폰용) ▼ ===== */
+
+/* 화면 가로 크기가 500px보다 작아질 때 아래의 디자인을 적용합니다. */
+@media (max-width: 500px) {
+    body {
+        /* 스마트폰에서는 화면에 꽉 차게 보이도록 여백(padding)을 없앱니다. */
+        padding: 0;
+        align-items: flex-start; /* 위쪽부터 보이도록 정렬 */
+    }
+
+    .survey-container {
+        /* 스마트폰에서는 카드 모서리 둥글게 하는 것과 그림자를 없애서 꽉 찬 화면처럼 보이게 합니다. */
+        max-width: 100%;
+        min-height: 100vh; /* 화면 높이를 꽉 채웁니다. */
+        border-radius: 0;
+        box-shadow: none;
+        padding: 20px; /* 내부 여백은 유지 */
+    }
+
+    h3 {
+        /* 스마트폰에서는 질문 글씨를 살짝 작게 조절합니다. */
+        font-size: 20px;
+    }
+
+    .option-btn {
+        /* 스마트폰에서는 버튼 안의 글씨를 살짝 작게 조절합니다. */
+        font-size: 15px;
+    }
 }

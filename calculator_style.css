@@ -108,3 +108,59 @@ footer { text-align: center; margin-top: 30px; }
 .back-btn:hover {
     background-color: #e9ecef;
 }
+/* ===== ▼ 반응형 웹을 위한 코드 (스마트폰용) ▼ ===== */
+
+/* 화면 가로 크기가 768px보다 작아질 때 아래의 디자인을 적용합니다. */
+@media (max-width: 768px) {
+    .calculator-container {
+        /* 스마트폰에서는 좌우 여백을 줄입니다. */
+        padding: 10px;
+        margin: 20px auto;
+    }
+
+    /* 상단 요약 박스를 세로로 쌓습니다. */
+    .summary {
+        grid-template-columns: 1fr; /* 1열로 변경 */
+        gap: 10px;
+    }
+
+    /* 날짜 탭이 화면을 넘어갈 경우 스크롤이 가능하도록 합니다. */
+    .day-tabs {
+        overflow-x: auto; /* 가로 스크롤 활성화 */
+        white-space: nowrap; /* 탭 버튼들이 한 줄로 유지되도록 */
+    }
+
+    /* 테이블 헤더는 숨기고, 각 항목을 카드 형태로 변경합니다. */
+    .table-header {
+        display: none;
+    }
+
+    .table-row {
+        grid-template-columns: 1fr; /* 1열로 변경 */
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 10px;
+        gap: 8px;
+    }
+
+    /* 각 항목 앞에 제목을 붙여줍니다. (예: "항목: 🍜 식비") */
+    .table-row div::before {
+        font-weight: bold;
+        display: inline-block;
+        width: 70px; /* 제목 너비 고정 */
+    }
+    .table-row div:nth-child(1)::before { content: '항목: '; }
+    .table-row div:nth-child(2)::before { content: '지출: '; }
+    .table-row div:nth-child(3)::before { content: '사용처: '; }
+    
+    /* 관리 버튼은 오른쪽 위에 배치합니다. */
+    .table-row .actions {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+    .table-row {
+        position: relative; /* actions 버튼의 기준점 */
+    }
+}

@@ -81,3 +81,26 @@
     flex-direction: column;
     gap: 5px;
 }
+/* ===== ▼ 반응형 웹을 위한 코드 (스마트폰용) ▼ ===== */
+
+/* 화면 가로 크기가 768px보다 작아질 때 아래의 디자인을 적용합니다. */
+@media (max-width: 768px) {
+    .result-container {
+        /* 스마트폰에서는 좌우 여백을 줄여서 더 넓게 보이게 합니다. */
+        padding: 10px;
+        margin: 20px auto;
+    }
+
+    .result-cards {
+        /* PC에서는 여러 열(grid)이었던 것을, 
+           스마트폰에서는 한 열로 쌓이도록 변경합니다. 
+        */
+        grid-template-columns: 1fr; /* 한 개의 열로 꽉 채우기 */
+        gap: 20px; /* 카드 사이 간격을 살짝 줄입니다. */
+    }
+
+    .result-container header h2 {
+        /* 제목 글씨 크기를 모바일에 맞게 살짝 줄입니다. */
+        font-size: 24px;
+    }
+}
