@@ -42,7 +42,7 @@ const questions = [
     }
 ];
 
-// --- 아래 코드는 수정할 필요 없습니다 ---
+// --- ▼▼▼ 여기가 수정/추가된 부분입니다 ▼▼▼ ---
 
 // 필요한 HTML 요소들을 가져오기
 const progressText = document.getElementById('progress-text');
@@ -52,6 +52,7 @@ const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
 
 let currentQuestionIndex = 0;
+let userAnswers = new Array(questions.length).fill(null); // 사용자의 답변을 저장할 배열
 
 // 특정 질문을 화면에 보여주는 함수
 function showQuestion(index) {
@@ -65,37 +66,43 @@ function showQuestion(index) {
         const button = document.createElement('button');
         button.innerText = optionText;
         button.classList.add('option-btn');
+        
+        // 이전에 선택한 답변이 있다면 'selected' 스타일을 적용
+        if (userAnswers[index] === optionText) {
+            button.classList.add('selected');
+        }
+
         button.addEventListener('click', (event) => {
-            // 모든 버튼의 'selected' 스타일 제거
             document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
-            // 클릭된 버튼에만 'selected' 스타일 추가
             event.target.classList.add('selected');
+            // 클릭 즉시 답변을 배열에 저장
+            userAnswers[index] = event.target.innerText;
         });
         optionsContainer.appendChild(button);
     });
 
     // 버튼 상태 관리
-    if (index === 0) {
-        prevBtn.style.display = 'none'; // 첫 질문에서는 '이전' 버튼 숨기기
-    } else {
-        prevBtn.style.display = 'block';
-    }
-
-    if (index === questions.length - 1) {
-        nextBtn.innerText = '결과 보기'; // 마지막 질문에서는 '다음'을 '결과 보기'로 변경
-    } else {
-        nextBtn.innerText = '다음';
-    }
+    prevBtn.style.display = (index === 0) ? 'none' : 'block';
+    nextBtn.innerText = (index === questions.length - 1) ? '결과 보기' : '다음';
 }
 
 // '다음' 버튼 클릭 이벤트
 nextBtn.addEventListener('click', () => {
+    // 현재 질문에 대한 답변을 선택했는지 확인
+    if (userAnswers[currentQuestionIndex] === null) {
+        alert('답변을 선택해주세요!');
+        return; // 답변을 선택하지 않았으면 넘어가지 않음
+    }
+
     if (currentQuestionIndex < questions.length - 1) {
         currentQuestionIndex++;
         showQuestion(currentQuestionIndex);
     } else {
         // 마지막 질문에서 '결과 보기'를 누르면
-        alert('모든 설문이 완료되었습니다! 이제 결과를 분석하여 추천해드릴게요.');
+        // 로컬 스토리지에 최종 답변 배열을 저장
+        localStorage.setItem('surveyResults', JSON.stringify(userAnswers));
+        // 결과 페이지로 이동
+        window.location.href = 'result.html';
     }
 });
 
