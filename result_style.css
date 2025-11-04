@@ -103,4 +103,66 @@
         /* 제목 글씨 크기를 모바일에 맞게 살짝 줄입니다. */
         font-size: 24px;
     }
+
+    
+/* ===== ▼▼▼ 리포트 페이지용 CSS (여기에 추가) ▼▼▼ ===== */
+
+/* 전체 리포트 레이아웃 (좌/우 2단) */
+.report-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* 왼쪽이 오른쪽보다 2배 넓게 */
+    gap: 40px;
+    align-items: flex-start;
+}
+
+.report-content h3, .recommendations h3 {
+    font-size: 22px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+/* 문장형 리포트 단락 스타일 */
+.report-paragraph {
+    font-size: 16px;
+    line-height: 1.7;
+    color: #444;
+}
+
+/* --- 차트 디자인 --- */
+.chart-area {
+    margin-bottom: 30px;
+}
+.chart-bar-wrapper {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 10px;
+}
+.bar-label {
+    width: 50px; /* 라벨 너비 고정 */
+    font-weight: 600;
+}
+.bar {
+    flex-grow: 1; /* 막대가 남은 공간을 모두 차지 */
+    height: 20px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.bar-inner {
+    height: 100%;
+    background-color: #007bff;
+    border-radius: 10px;
+}
+.bar-percentage {
+    width: 40px;
+    font-weight: 600;
+}
+/* --- 반응형 (스마트폰) --- */
+@media (max-width: 768px) {
+    .report-layout {
+        grid-template-columns: 1fr; /* 스마트폰에서는 1열로 쌓이도록 변경 */
+    }
+}
 }
