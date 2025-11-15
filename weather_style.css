@@ -1,0 +1,107 @@
+/* 날씨 위젯 컨테이너 */
+.weather-widget {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    max-width: 450px;
+    margin: 20px;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* 현재 날씨 섹션 */
+.current-weather {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+.location-time {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 15px;
+}
+
+.temp-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.temp {
+    display: flex;
+    align-items: center;
+}
+
+.current-temp {
+    font-size: 36px;
+    font-weight: 700;
+    color: #333;
+    margin-right: 10px;
+}
+
+.status-icon {
+    font-size: 30px;
+}
+
+.status {
+    font-size: 16px;
+    font-weight: 600;
+    color: #4a90e2; /* 맑음/구름 등 상태 색상 */
+}
+
+/* 시간대별/3일 예보 탭 */
+.forecast-tabs {
+    display: flex;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.tab {
+    padding: 8px 15px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    color: #888;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-bottom-color 0.2s;
+}
+
+.tab.active {
+    color: #007bff;
+    border-bottom-color: #007bff;
+}
+
+/* 예보 상세 리스트 */
+.hourly-forecast {
+    display: flex;
+    justify-content: space-between;
+}
+
+.forecast-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 5px;
+}
+
+.forecast-item .time {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.forecast-item .icon {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+.forecast-item .temp-f {
+    font-size: 14px;
+    font-weight: 600;
+}
