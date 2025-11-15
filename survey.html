@@ -5,29 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>부산 쉼표 - 여행 성향 테스트</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="layout.css">
 </head>
 <body>
-    <div class="survey-container">
-        <header>
-            <h1>부산 쉼표</h1>
-            <h2>쉼표 여행 성향 테스트</h2>
-        </header>
-        <main>
-            <div class="question-card">
-                <p id="progress-text" class="question-number">질문 1/10</p>
-                <h3 id="question-title">질문이 여기에 표시됩니다.</h3>
-                <div id="options-container" class="options">
-                    </div>
+
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo">
+                <a href="index.html">부산 쉼표</a>
             </div>
-        </main>
-        <footer>
-            <div class="nav-buttons">
-                <button id="prev-btn" class="nav-btn prev">이전</button>
-                <button id="next-btn" class="nav-btn next">다음</button>
-            </div>
-        </footer>
-    </div>
+            <nav class="main-nav">
+                <a href="survey.html">코스 추천</a>
+                <a href="trip_list.html">나의 여행</a>
+                <a href="community.html">커뮤니티</a>
+                <a href="login.html">로그인</a>
+            </nav>
+            <button class="hamburger-btn">☰</button>
+        </div>
+    </header>
+
+    <nav class="mobile-nav">
+        <a href="survey.html">코스 추천</a>
+        <a href="trip_list.html">나의 여행</a>
+        <a href="community.html">커뮤니티</a>
+        <a href="login.html">로그인</a>
+    </nav>
+
+    <main class="main-content">
+        <div class="survey-container">
+            <header>
+                <h1>부산 쉼표</h1>
+                <h2>쉼표 여행 성향 테스트</h2>
+            </header>
+            <main>
+                <div class="question-card">
+                    <p id="progress-text" class="question-number">질문 1/10</p>
+                    <h3 id="question-title">질문이 여기에 표시됩니다.</h3>
+                    <div id="options-container" class="options">
+                        </div>
+                </div>
+            </main>
+            <footer>
+                <div class="nav-buttons">
+                    <button id="prev-btn" class="nav-btn prev">이전</button>
+                    <button id="next-btn" class="nav-btn next">다음</button>
+                </div>
+            </footer>
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <p>&copy; 2025 울끈불끈쥐. All Rights Reserved.</p>
+    </footer>
 
     <script src="script.js"></script>
+    <script src="layout.js"></script>
 </body>
 </html>

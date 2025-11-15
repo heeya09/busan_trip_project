@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>부산 쉼표 - 새 글 작성</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="write_post_style.css">
+    <title>부산 쉼표 - 나의 다이어리</title>
+    <link rel="stylesheet" href="style.css"> 
     <link rel="stylesheet" href="layout.css">
-</head>
+    <link rel="stylesheet" href="write_post_style.css"> </head>
 <body>
 
     <header class="main-header">
@@ -19,6 +18,7 @@
                 <a href="survey.html">코스 추천</a>
                 <a href="trip_list.html">나의 여행 가계부</a>
                 <a href="community.html">커뮤니티</a>
+                <a href="schedule.html">일정 수정</a>
                 <a href="login.html">로그인</a>
             </nav>
             <button class="hamburger-btn">☰</button>
@@ -29,34 +29,34 @@
         <a href="survey.html">코스 추천</a>
         <a href="trip_list.html">나의 여행 가계부</a>
         <a href="community.html">커뮤니티</a>
+        <a href="schedule.html">일정 수정</a>
         <a href="login.html">로그인</a>
     </nav>
 
     <main class="main-content">
         <div class="write-container">
             <header class="page-header">
-                <a href="community.html" class="back-btn">←</a>
-                <h2>새 여행기 작성</h2>
+                <a href="trip_list.html" class="back-btn">←</a> <h2>나의 여행 다이어리 작성</h2>
             </header>
 
             <main class="write-form">
-                <input type="text" id="post-title" placeholder="매력적인 제목을 붙여주세요">
+                <input type="text" id="diary-title" placeholder="여행 일기 제목을 적어주세요">
                 
                 <div class="tag-editor">
-                    <input type="text" id="post-tags" placeholder="태그 입력 후 Enter 또는 스페이스바를 누르세요 (예: #해운대)">
+                    <input type="text" id="diary-tags" placeholder="태그를 입력하세요 (예: #힐링 #송정해변)">
                     <div id="tag-list" class="tag-list"></div>
                 </div>
 
-                <textarea id="post-content" placeholder="어떤 여행이었나요? 당신의 경험을 자유롭게 공유해주세요."></textarea>
+                <textarea id="diary-content" placeholder="오늘의 여행 경험을 기록해 보세요."></textarea>
 
                 <div class="file-upload">
-                    <label for="post-photos">📷 사진 첨부하기</label>
-                    <input type="file" id="post-photos" multiple>
+                    <label for="diary-photos">📷 사진 첨부하기</label>
+                    <input type="file" id="diary-photos" multiple>
                 </div>
                 
                 <div class="form-buttons">
                     <button id="cancel-btn">취소</button>
-                    <button id="submit-btn">등록하기</button>
+                    <button id="submit-btn">저장하기</button>
                 </div>
             </main>
         </div>
@@ -66,7 +66,6 @@
         <p>&copy; 2025 울끈불끈쥐. All Rights Reserved.</p>
     </footer>
 
-    <script src="write_post_script.js"></script>
     <script src="layout.js"></script>
 </body>
 </html>

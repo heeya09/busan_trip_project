@@ -3,49 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>부산 쉼표 - 당신을 위한 여행 분석</title>
+    <title>부산 쉼표 - 맞춤 추천 결과</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="result_style.css">
+    <link rel="stylesheet" href="layout.css">
 </head>
 <body>
-    <div class="result-container">
-        <header>
-            <h1>부산 쉼표</h1>
-            <h2 id="user-type-title">당신의 여행 스타일을 분석 중입니다...</h2>
-            <p>설문 결과를 바탕으로 당신의 여행 성향을 알려드려요.</p>
-        </header>
 
-        <main class="report-layout">
-            <div class="report-content">
-                <h3>📊 활동 유형 분석</h3>
-                <div id="chart-container" class="chart-area"></div>
-                
-                <h3>📝 당신을 위한 맞춤 리포트</h3>
-                <p id="report-text" class="report-paragraph"></p>
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo">
+                <a href="index.html">부산 쉼표</a>
             </div>
+            <nav class="main-nav">
+                <a href="survey.html">코스 추천</a>
+                <a href="trip_list.html">나의 여행 가계부</a>
+                <a href="community.html">커뮤니티</a>
+                <a href="login.html">로그인</a>
+            </nav>
+            <button class="hamburger-btn">☰</button>
+        </div>
+    </header>
 
-            <div class="recommendations">
-                <h3>✨ 당신을 위한 추천 경로</h3>
-                <div id="recommend-cards" class="result-cards">
-                    <div class="card">
-                        <img src="photo1.jpg" alt="추천 경로 이미지">
-                        <div class="card-content">
-                            <div class="tags">
-                                <span class="tag">#태그1</span>
-                                <span class="tag">#태그2</span>
-                            </div>
-                            <h3>추천 경로 제목</h3>
-                            <div class="info">
-                                <span>💰 예상 경비: 약 00만원</span>
-                                <span>🗓️ 추천 기간: 0박 0일</span>
-                            </div>
+    <nav class="mobile-nav">
+        <a href="survey.html">코스 추천</a>
+        <a href="trip_list.html">나의 여행 가계부</a>
+        <a href="community.html">커뮤니티</a>
+        <a href="login.html">로그인</a>
+    </nav>
+
+    <main class="main-content">
+        <div class="result-container">
+            <header>
+                <h1>부산 쉼표</h1>
+                <h2>나를 위한 맞춤 추천 코스</h2>
+                <p>설문 결과를 바탕으로 가장 잘 맞는 여행 코스를 추천해 드려요.</p>
+            </header>
+
+            <main class="result-cards">
+                <a href="schedule.html" class="card">
+                    <img src="photo1.jpg" alt="바다 사진">
+                    <div class="card-content">
+                        <div class="tags">
+                            <span class="tag">#힐링여행</span>
+                            <span class="tag">#오션뷰</span>
+                        </div>
+                        <h3>오션뷰 힐링, 부산 완전 정복 코스</h3>
+                        <div class="info">
+                            <span>💰 예상 경비: 약 45만원</span>
+                            <span>🗓️ 추천 기간: 2박 3일</span>
                         </div>
                     </div>
-                </div>
-            </div>
-        </main>
-    </div>
+                </a>
 
-    <script src="analysis.js"></script>
+                <a href="schedule.html" class="card">
+                    <img src="photo2.jpg" alt="감천문화마을 사진">
+                    <div class="card-content">
+                        <div class="tags">
+                            <span class="tag">#사진맛집</span>
+                            <span class="tag">#골목투어</span>
+                        </div>
+                        <h3>인생샷 보장! 감성 골목 투어 코스</h3>
+                        <div class="info">
+                            <span>💰 예상 경비: 약 25만원</span>
+                            <span>🗓️ 추천 기간: 1박 2일</span>
+                        </div>
+                    </div>
+                </a>
+            </main>
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <p>&copy; 2025 울끈불끈쥐. All Rights Reserved.</p>
+    </footer>
+    
+    <script src="layout.js"></script>
 </body>
 </html>

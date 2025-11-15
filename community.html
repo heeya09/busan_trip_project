@@ -6,26 +6,58 @@
     <title>부산 쉼표 - 여행기 공유</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="community_style.css">
+    <link rel="stylesheet" href="layout.css">
 </head>
 <body>
-    <div class="community-container">
-        <header class="page-header">
-            <a href="index.html" class="back-btn">←</a>
-            <h2>여행기 공유하기 ✈️</h2>
-        </header>
 
-        <div class="toolbar">
-            <input type="text" class="search-bar" placeholder="여행기 제목, 태그 검색...">
-            <div class="filters">
-                <button class="filter-btn active">최신순</button>
-                <button class="filter-btn">인기순</button>
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo">
+                <a href="index.html">부산 쉼표</a>
             </div>
+            <nav class="main-nav">
+                <a href="survey.html">코스 추천</a>
+                <a href="trip_list.html">나의 여행</a>
+                <a href="community.html">커뮤니티</a>
+                <a href="login.html">로그인</a>
+            </nav>
+            <button class="hamburger-btn">☰</button>
         </div>
+    </header>
 
-        <main class="post-list">
-            </main>
+    <nav class="mobile-nav">
+        <a href="survey.html">코스 추천</a>
+        <a href="trip_list.html">나의 여행</a>
+        <a href="community.html">커뮤니티</a>
+        <a href="login.html">로그인</a>
+    </nav>
 
-        <a href="write_post.html" class="write-btn">✏️ 글쓰기</a>
-    </div>
+    <main class="main-content">
+        <div class="community-container">
+            <header class="page-header">
+                <a href="index.html" class="back-btn">←</a>
+                <h2>여행기 공유하기 ✈️</h2>
+            </header>
+
+            <div class="toolbar">
+                <input type="text" class="search-bar" placeholder="여행기 제목, 태그 검색...">
+                <div class="filters">
+                    <button class="filter-btn active">최신순</button>
+                    <button class="filter-btn">인기순</button>
+                </div>
+            </div>
+
+            <main class="post-list">
+                </main>
+
+            <a href="write_post.html" class="write-btn">✏️ 글쓰기</a>
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <p>&copy; 2025 울끈불끈쥐. All Rights Reserved.</p>
+    </footer>
+
+    <script src="layout.js"></script>
 </body>
 </html>

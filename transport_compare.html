@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>부산 쉼표 - 교통수단 비교</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="layout.css">
+    <link rel="stylesheet" href="transport_style.css">
+</head>
+<body>
+    
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo">
+                <a href="index.html">부산 쉼표</a>
+            </div>
+            <nav class="main-nav">
+                <a href="survey.html">코스 추천</a>
+                <a href="trip_list.html">나의 여행 가계부</a>
+                <a href="community.html">커뮤니티</a>
+                <a href="schedule.html">일정 수정</a>
+                <a href="login.html">로그인</a>
+            </nav>
+            <button class="hamburger-btn">☰</button>
+        </div>
+    </header>
+
+    <nav class="mobile-nav">
+        <a href="survey.html">코스 추천</a>
+        <a href="trip_list.html">나의 여행 가계부</a>
+        <a href="community.html">커뮤니티</a>
+        <a href="schedule.html">일정 수정</a>
+        <a href="login.html">로그인</a>
+    </nav>
+
+    <main class="main-content">
+        <div class="transport-container">
+            <h2>교통수단 소요 시간 비교</h2>
+            <p class="route-info">출발: 부산역 ➡️ 도착: 해운대 해수욕장</p>
+
+            <div class="comparison-grid">
+                
+                <div class="transport-card public-transport">
+                    <h3>🚌 대중교통 (최소 시간)</h3>
+                    <div class="detail-row">
+                        <span class="label">예상 소요 시간</span>
+                        <span class="value time">1시간 15분</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">예상 비용</span>
+                        <span class="value cost">₩ 1,550</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">환승 횟수</span>
+                        <span class="value count">1회</span>
+                    </div>
+                </div>
+
+                <div class="transport-card private-car">
+                    <h3>🚗 자가용 (실시간)</h3>
+                    <div class="detail-row">
+                        <span class="label">예상 소요 시간</span>
+                        <span class="value time">50분</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">예상 비용</span>
+                        <span class="value cost">₩ 4,000</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">혼잡도</span>
+                        <span class="value congestion">보통</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="visualization-area">
+                <h3>소요 시간 비교</h3>
+                <div class="chart-placeholder">
+                    [여기에 송채은 님의 JS 코드로 막대 그래프가 표시됩니다.]
+                </div>
+            </div>
+
+            <button class="select-btn">이 경로 선택하기</button>
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <p>&copy; 2025 울끈불끈쥐. All Rights Reserved.</p>
+    </footer>
+
+    <script src="layout.js"></script>
+</body>
+</html>

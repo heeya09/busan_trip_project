@@ -6,59 +6,91 @@
     <title>부산 쉼표 - 여행 가계부</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="calculator_style.css">
+    <link rel="stylesheet" href="layout.css">
 </head>
 <body>
-    <div class="calculator-container">
-        <header class="page-header">
-            <a href="trip_list.html" class="back-btn">←</a>
-            <h2 id="trip-title">여행 가계부</h2>
-        </header>
-        <section class="summary">
-            <div class="summary-box">
-                <label>오늘의 예산</label>
-                <div id="daily-budget" class="amount">₩ 100,000</div>
-            </div>
-            <div class="summary-box">
-                <label>오늘의 지출</label>
-                <div id="daily-spent" class="amount">₩ 0</div>
-            </div>
-            <div class="summary-box remaining">
-                <label>남은 예산</label>
-                <div id="daily-remaining" class="amount">₩ 100,000</div>
-            </div>
-        </section>
 
-        <nav id="day-tabs" class="day-tabs"></nav>
-        
-        <main class="expense-table">
-            <div class="table-header">
-                <div>항목</div>
-                <div>지출</div>
-                <div>사용처</div>
-                <div>관리</div>
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo">
+                <a href="index.html">부산 쉼표</a>
             </div>
-            <div id="table-body" class="table-body">
+            <nav class="main-nav">
+                <a href="survey.html">코스 추천</a>
+                <a href="trip_list.html">나의 여행</a>
+                <a href="community.html">커뮤니티</a>
+                <a href="login.html">로그인</a>
+            </nav>
+            <button class="hamburger-btn">☰</button>
+        </div>
+    </header>
+
+    <nav class="mobile-nav">
+        <a href="survey.html">코스 추천</a>
+        <a href="trip_list.html">나의 여행</a>
+        <a href="community.html">커뮤니티</a>
+        <a href="login.html">로그인</a>
+    </nav>
+
+    <main class="main-content">
+        <div class="calculator-container">
+            <header class="page-header">
+                <a href="trip_list.html" class="back-btn">←</a>
+                <h2 id="trip-title">여행 가계부</h2>
+            </header>
+
+            <section class="summary">
+                <div class="summary-box">
+                    <label>오늘의 예산</label>
+                    <div id="daily-budget" class="amount">₩ 100,000</div>
                 </div>
-        </main>
+                <div class="summary-box">
+                    <label>오늘의 지출</label>
+                    <div id="daily-spent" class="amount">₩ 0</div>
+                </div>
+                <div class="summary-box remaining">
+                    <label>남은 예산</label>
+                    <div id="daily-remaining" class="amount">₩ 100,000</div>
+                </div>
+            </section>
 
-        <footer>
-            <button id="add-btn" class="add-btn">+ 항목 추가하기</button>
-        </footer>
-    </div>
+            <nav id="day-tabs" class="day-tabs"></nav>
+            
+            <main class="expense-table">
+                <div class="table-header">
+                    <div>항목</div>
+                    <div>지출</div>
+                    <div>사용처</div>
+                    <div>관리</div>
+                </div>
+                <div id="table-body" class="table-body">
+                    </div>
+            </main>
 
-    <div id="add-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h3>새 항목 추가</h3>
-            <input type="text" id="item-category" placeholder="항목 (예: ☕ 카페)">
-            <input type="number" id="item-spent" placeholder="지출액 (숫자만 입력)">
-            <input type="text" id="item-description" placeholder="사용처 (예: 스타벅스)">
-            <div class="modal-buttons">
-                <button id="cancel-btn">취소</button>
-                <button id="save-btn">저장</button>
+            <footer>
+                <button id="add-btn" class="add-btn">+ 항목 추가하기</button>
+            </footer>
+        </div>
+
+        <div id="add-modal" class="modal-overlay">
+            <div class="modal-content">
+                <h3>새 항목 추가</h3>
+                <input type="text" id="item-category" placeholder="항목 (예: ☕ 카페)">
+                <input type="number" id="item-spent" placeholder="지출액 (숫자만 입력)">
+                <input type="text" id="item-description" placeholder="사용처 (예: 스타벅스)">
+                <div class="modal-buttons">
+                    <button id="cancel-btn">취소</button>
+                    <button id="save-btn">저장</button>
+                </div>
             </div>
         </div>
-    </div>
+    </main>
+
+    <footer class="main-footer">
+        <p>&copy; 2025 울끈불끈쥐. All Rights Reserved.</p>
+    </footer>
 
     <script src="calculator_script.js"></script>
+    <script src="layout.js"></script>
 </body>
 </html>
