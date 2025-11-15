@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>부산 쉼표 - 일정 관리</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="layout.css">
+    <link rel="stylesheet" href="schedule_style.css">
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo">
+                <a href="index.html">부산 쉼표</a>
+            </div>
+            <nav class="main-nav">
+                <a href="survey.html">코스 추천</a>
+                <a href="trip_list.html">나의 여행 가계부</a>
+                <a href="community.html">커뮤니티</a>
+                <a href="login.html">로그인</a>
+            </nav>
+            <button class="hamburger-btn">☰</button>
+        </div>
+    </header>
+
+    <nav class="mobile-nav">
+        <a href="survey.html">코스 추천</a>
+        <a href="trip_list.html">나의 여행 가계부</a>
+        <a href="community.html">커뮤니티</a>
+        <a href="login.html">로그인</a>
+    </nav>
+
+    <main class="main-content">
+        <div class="schedule-container">
+            <header class="page-header">
+                <h2>나의 일정 관리</h2>
+                <button class="save-btn" id="save-schedule-btn">일정 저장</button>
+            </header>
+
+            <div class="schedule-board">
+                <div class="day-column">
+                    <h3>Day 1 (10월 28일)</h3>
+                    <ul class="timeline" id="day1-timeline">
+                        </ul>
+                    <button class="add-item-btn" data-timeline-id="day1-timeline">+ 항목 추가</button>
+                </div>
+
+                <div class="day-column">
+                    <h3>Day 2 (10월 29일)</h3>
+                    <ul class="timeline" id="day2-timeline">
+                        </ul>
+                    <button class="add-item-btn" data-timeline-id="day2-timeline">+ 항목 추가</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="schedule-modal" class="modal-overlay">
+            <div class="modal-content">
+                <h3 id="modal-title">일정 항목 추가/수정</h3>
+                <label for="item-time-input">시간 (Time)</label>
+                <input type="time" id="item-time-input">
+                <label for="item-title-input">장소/활동 (Title)</label>
+                <input type="text" id="item-title-input" placeholder="예: 해운대 해수욕장">
+                <div class="modal-buttons">
+                    <button id="cancel-schedule-btn">취소</button>
+                    <button id="save-item-btn">저장</button>
+                </div>
+            </div>
+        </div>
+        </main>
+
+    <footer class="main-footer">
+        <p>&copy; 2025 울끈불끈쥐. All Rights Reserved.</p>
+    </footer>
+
+    <script src="layout.js"></script>
+    <script src="schedule_script.js"></script>
+</body>
+</html>
