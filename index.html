@@ -5,17 +5,174 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>부산 쉼표</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="layout.css">
+    <link rel="stylesheet" href="weather_style.css"> 
+    <style>
+        /* 홈 화면 대시보드 스타일 */
+        .dashboard-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr; /* 2:1 비율의 2단 레이아웃 */
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .main-panel {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .widget-placeholder {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        .feature-links {
+            text-align: center;
+            margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+        .feature-links a { 
+            display: inline-block;
+            padding: 15px 30px;
+            font-size: 16px;
+            text-decoration: none;
+            color: white;
+            background-color: #007bff;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 992px) {
+            .dashboard-layout {
+                grid-template-columns: 1fr; 
+            }
+        }
+    </style>
 </head>
-<body style="text-align: center; padding-top: 50px;">
+<body>
+    
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo">
+                <a href="index.html">부산 쉼표</a>
+            </div>
+            <nav class="main-nav">
+                <a href="survey.html">코스 추천</a>
+                <a href="trip_list.html">나의 여행 가계부</a>
+                <a href="community.html">커뮤니티</a>
+                <a href="schedule.html">일정 수정</a> <a href="login.html">로그인</a>
+            </nav>
+            <button class="hamburger-btn">☰</button>
+        </div>
+    </header>
 
-    <h1>부산 쉼표</h1>
-    <p>홈 화면입니다. 나중에 멋지게 꾸밀 예정입니다!</p>
-    <br>
-    <p>
-        <a href="survey.html">설문조사 하러가기 (임시 링크)</a><br><br>
-        <a href="trip_list.html">나의 여행 일기장 (임시 링크)</a><br><br>
-        <a href="community.html">여행기 공유하기 (임시 링크)</a>
-    </p>
+    <nav class="mobile-nav">
+        <a href="survey.html">코스 추천</a>
+        <a href="trip_list.html">나의 여행 가계부</a>
+        <a href="community.html">커뮤니티</a>
+        <a href="schedule.html">일정 수정</a> <a href="login.html">로그인</a>
+    </nav>
 
+    <main class="main-content">
+        <div class="dashboard-container">
+            <h1>부산 쉼표 대시보드</h1>
+            <div class="dashboard-layout">
+                
+                <section class="main-panel">
+                    <h3>핵심 기능 및 관리</h3>
+                    <p>현재까지 완료된 기능들을 확인하고, 다음 단계로 이동합니다.</p>
+                    <div class="feature-links">
+                        <a href="login.html" class="login">로그인 / 회원가입</a>
+                        <a href="survey.html">코스 추천 시작</a>
+                        <a href="trip_list.html">나의 가계부 관리</a>
+                        <a href="community.html">여행기 공유 (커뮤니티)</a>
+                        <a href="schedule.html">일정 수정 (D&D)</a>
+                    </div>
+                </section>
+
+                <aside class="side-panel">
+                    
+                    <h3>실시간 정보</h3>
+                    <div class="weather-widget-wrapper widget-placeholder">
+                        <div class="weather-widget">
+                            <div class="current-weather">
+                                <div class="location-time">
+                                    <span class="location">부산 해운대구</span>
+                                    <span class="update-time">오전 10:30 업데이트</span>
+                                </div>
+                                <div class="temp-main">
+                                    <div class="temp">
+                                        <span class="current-temp">24°C</span>
+                                        <span class="status-icon">☀️</span>
+                                    </div>
+                                    <div class="status">맑음</div>
+                                </div>
+                            </div>
+                            
+                            <div class="forecast-tabs">
+                                <button class="tab active">시간대별</button>
+                                <button class="tab">3일 예보</button>
+                            </div>
+
+                            <div class="hourly-forecast">
+                                <div class="forecast-item">
+                                    <span class="time">12시</span>
+                                    <span class="icon">🌤️</span>
+                                    <span class="temp-f">26°C</span>
+                                </div>
+                                <div class="forecast-item">
+                                    <span class="time">15시</span>
+                                    <span class="icon">🌤️</span>
+                                    <span class="temp-f">27°C</span>
+                                </div>
+                                <div class="forecast-item">
+                                    <span class="time">18시</span>
+                                    <span class="icon">☁️</span>
+                                    <span class="temp-f">24°C</span>
+                                </div>
+                                <div class="forecast-item">
+                                    <span class="time">21시</span>
+                                    <span class="icon">🌙</span>
+                                    <span class="temp-f">20°C</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="widget-placeholder">
+                        <p><strong>오늘 방문자 수</strong></p>
+                        <p style="font-size: 28px; font-weight: bold; color: #007bff;">1,375 명</p>
+                    </div>
+
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <p>&copy; 2025 울끈불끈쥐. All Rights Reserved.</p>
+    </footer>
+
+    <script src="layout.js"></script>
 </body>
 </html>

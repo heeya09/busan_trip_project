@@ -2,26 +2,25 @@
 
 body {
     margin: 0;
-    font-family: 'Noto Sans KR', sans-serif;
-    background-color: #d4e7ff; /* 맑은 바다색 */
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    font-family: 'Noto+Sans KR', sans-serif;
+    background-color: #f4f7f6; /* 회색 배경은 유지 (푸터와 구분) */
     min-height: 100vh;
-    padding: 20px;
     box-sizing: border-box;
 }
 
+/* ▼▼▼ 이 부분이 수정되었습니다 ▼▼▼ */
 .survey-container {
-    background-color: white;
+    /* 이제 .main-content가 흰색 배경/그림자/여백을 담당하므로,
+       .survey-container는 오직 '내용물의 최대 너비'만 잡습니다.
+    */
     width: 100%;
-    max-width: 500px;
-    border-radius: 15px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    padding: 30px;
+    max-width: 800px; /* 내용물 최대 너비 */
+    margin: 0 auto; /* 중앙 정렬 */
+    padding: 0 20px; /* 모바일용 좌우 여백 */
     box-sizing: border-box;
     text-align: center;
 }
+/* ▲▲▲ 여기까지 ▲▲▲ */
 
 header h1 {
     font-size: 24px;
@@ -29,38 +28,32 @@ header h1 {
     font-weight: 700;
     margin: 0;
 }
-
 header h2 {
     font-size: 18px;
     color: #555;
     margin-top: 5px;
     margin-bottom: 30px;
 }
-
 .question-card {
     margin-bottom: 30px;
     min-height: 300px;
 }
-
 .question-number {
     color: #888;
     font-size: 14px;
 }
-
 h3 {
     font-size: 22px;
     color: #333;
     margin-top: 10px;
     line-height: 1.5;
 }
-
 .options {
     display: flex;
     flex-direction: column;
     gap: 15px;
     margin-top: 25px;
 }
-
 .option-btn {
     background-color: #ffffff;
     border: 1px solid #ddd;
@@ -71,29 +64,24 @@ h3 {
     text-align: left;
     transition: all 0.2s ease-in-out;
 }
-
 .option-btn:hover {
     border-color: #007bff;
     background-color: #e9f5ff;
 }
-
 .option-btn.selected {
     border-color: #007bff;
     background-color: #007bff;
     color: white;
     font-weight: 700;
 }
-
 footer {
     padding-top: 20px;
     border-top: 1px solid #eee;
 }
-
 .nav-buttons {
     display: flex;
     gap: 10px;
 }
-
 .nav-btn {
     flex: 1;
     border: none;
@@ -104,52 +92,39 @@ footer {
     cursor: pointer;
     transition: background-color 0.2s;
 }
-
 .nav-btn.next {
     background-color: #007bff;
     color: white;
 }
-
 .nav-btn.next:hover {
     background-color: #0056b3;
 }
-
 .nav-btn.prev {
     background-color: #f0f0f0;
     color: #555;
 }
-
 .nav-btn.prev:hover {
     background-color: #e0e0e0;
 }
 
-
-/* ===== ▼ 반응형 웹을 위한 코드 (스마트폰용) ▼ ===== */
-
-/* 화면 가로 크기가 500px보다 작아질 때 아래의 디자인을 적용합니다. */
+/* 반응형 코드 */
 @media (max-width: 500px) {
-    body {
-        /* 스마트폰에서는 화면에 꽉 차게 보이도록 여백(padding)을 없앱니다. */
-        padding: 0;
-        align-items: flex-start; /* 위쪽부터 보이도록 정렬 */
+    /* 이제 .survey-container가 아닌,
+      .main-content에 직접 패딩을 줍니다.
+    */
+    .main-content {
+        padding-top: 80px;
+        padding-bottom: 20px;
     }
-
     .survey-container {
-        /* 스마트폰에서는 카드 모서리 둥글게 하는 것과 그림자를 없애서 꽉 찬 화면처럼 보이게 합니다. */
-        max-width: 100%;
-        min-height: 100vh; /* 화면 높이를 꽉 채웁니다. */
-        border-radius: 0;
-        box-shadow: none;
-        padding: 20px; /* 내부 여백은 유지 */
+        padding: 0 10px; /* 모바일 좌우 여백 */
     }
 
     h3 {
-        /* 스마트폰에서는 질문 글씨를 살짝 작게 조절합니다. */
         font-size: 20px;
     }
 
     .option-btn {
-        /* 스마트폰에서는 버튼 안의 글씨를 살짝 작게 조절합니다. */
         font-size: 15px;
     }
 }
