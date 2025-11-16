@@ -1,172 +1,208 @@
-/* 여행 목록 페이지 전체 레이아웃 */
-.list-container {
-    width: 100%;
+/* transport_style.css */
+
+/* 전체 컨테이너 및 레이아웃 */
+.transport-container {
     max-width: 800px;
-    margin: 0 auto;
-    padding: 0 20px;
-    box-sizing: border-box;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* 여행 카드들을 감싸는 영역 */
-.trip-cards {
-    margin-top: 40px;
+.transport-container h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 26px;
+}
+
+.route-info {
+    text-align: center;
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+
+.input-area {
     display: flex;
-    flex-direction: column;
-    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 25px;
 }
 
-/* 개별 여행 카드 디자인 */
-.trip-card {
-    background-color: white;
+.input-area input {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    flex-grow: 1;
+    max-width: 250px;
+}
+
+.input-area .arrow {
+    font-size: 20px;
+    color: #007bff;
+    font-weight: bold;
+}
+/* ▲▲▲ 여기까지 ▲▲▲ */
+
+
+/* 교통수단 비교 카드 레이아웃 (줄글 오류 수정) */
+.comparison-grid {
+    display: flex; /* 핵심: flex로 다시 가로 정렬 */
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.transport-card {
+    flex: 1;
     padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s;
+}
+
+.transport-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.public-transport {
+    background-color: #e9f5ff; /* 연한 파란색 배경 */
+    border-left: 5px solid #007bff;
+}
+
+.private-car {
+    background-color: #fff3e6; /* 연한 주황색 배경 */
+    border-left: 5px solid #ff9800;
+}
+
+.transport-card h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+.detail-row {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    cursor: default; /* 카드 전체 클릭 대신 버튼 클릭이므로 default */
+    padding: 8px 0;
+    border-bottom: 1px dashed #eee;
+    font-size: 16px;
 }
 
-.trip-card:hover {
-    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+.detail-row:last-child {
+    border-bottom: none;
 }
 
-.card-info {
-    cursor: pointer;
-    flex-grow: 1; 
+.detail-row .label {
+    color: #555;
+    font-weight: 500;
 }
 
-.card-info:hover h3 {
-    color: #007bff; /* 마우스를 올리면 제목 색 변경 */
+.detail-row .value {
+    font-weight: 700;
 }
 
-.trip-card h3 {
-    margin: 0 0 8px 0;
-    font-size: 20px;
-    color: #333;
-    transition: color 0.2s;
-}
-
-.trip-card p {
-    margin: 0;
-    font-size: 14px;
-    color: #666;
-}
-
-/* 수정/삭제 버튼 디자인 */
-.card-actions {
-    display: flex;
-    gap: 10px;
-}
-
-.card-actions button {
-    border: none;
-    background: none;
-    cursor: pointer;
-    font-size: 20px;
-    padding: 5px;
-    color: #aaa;
-    transition: color 0.2s;
-}
-
-.card-actions button:hover {
-    color: #dc3545; /* 삭제 버튼 강조 */
-}
-
-/* 새 여행 추가 버튼 */
-footer {
+.visualization-area h3 {
     text-align: center;
-    margin-top: 40px;
+    margin-bottom: 25px;
+    font-size: 22px;
+    color: #333;
 }
 
-.add-trip-btn {
-    background-color: #007bff;
-    color: white;
+/* 막대 그래프 시각화 영역 */
+.chart-placeholder {
+    height: 200px;
+    border-bottom: 2px solid #ccc;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end; /* 막대가 바닥에 붙도록 */
+    position: relative;
+}
+
+.chart-unit {
+    position: absolute;
+    top: -15px;
+    left: 0;
+    font-size: 12px;
+    color: #777;
+}
+
+/* JS로 생성되는 막대 그래프 요소 스타일 */
+.chart-bar-container {
+    width: 100px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    height: 100%;
+    margin: 0 10px;
+}
+
+.chart-bar {
+    width: 60px;
+    border-radius: 8px 8px 0 0;
+    margin-top: auto;
+    /* JS에서 height와 background-color가 설정됨 */
+    transition: height 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    min-height: 5px;
+}
+
+.bar-value {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.bar-label {
+    margin-top: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #555;
+}
+
+/* 경로 선택 버튼 */
+.select-btn {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    margin-top: 30px;
     border: none;
     border-radius: 10px;
-    padding: 15px 0;
-    width: 100%;
+    background-color: #007bff;
+    color: white;
     font-size: 18px;
     font-weight: 700;
     cursor: pointer;
     transition: background-color 0.2s;
 }
 
-.add-trip-btn:hover {
+.select-btn:hover {
     background-color: #0056b3;
 }
-
-
-/* 팝업창(모달) 디자인 */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); 
-    display: none; 
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
-}
-
-.modal-content {
-    background-color: white;
-    padding: 30px;
-    border-radius: 15px;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 5px 25px rgba(0,0,0,0.2);
-}
-
-.modal-content h3 {
-    margin-top: 0;
-    text-align: center;
-    margin-bottom: 25px;
-}
-
-.modal-content label {
-    display: block;
-    margin-bottom: 5px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #555;
-}
-
-.modal-content input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    box-sizing: border-box;
-    font-size: 16px;
-}
-
-.modal-buttons {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.modal-buttons button {
-    flex: 1;
-    padding: 12px;
-    border-radius: 8px;
-    border: none;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-#cancel-trip-btn {
-    background-color: #f0f0f0;
-    color: #555;
-}
-
-#save-trip-btn {
-    background-color: #007bff;
-    color: white;
+/* ===== ▼ 반응형 웹을 위한 코드 (스마트폰용) ▼ ===== */
+@media (max-width: 600px) {
+    .comparison-grid {
+        flex-direction: column; /* 스마트폰에서 카드를 세로로 쌓습니다. */
+    }
+    
+    .input-area {
+        flex-direction: column;
+        gap: 5px;
+    }
+    .input-area input {
+        width: 100%;
+        max-width: none;
+    }
+    .input-area .arrow {
+        display: none; /* 화살표 숨기기 */
+    }
 }
